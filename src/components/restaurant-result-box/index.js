@@ -85,10 +85,13 @@ const RestaurantResultBox = (props) => {
       .then((data) => fetchReviews());
   };
 
+  const imageURL =
+    "https://cn-geo1.uber.com/image-proc/resize/eats/format=webp/width=550/height=440/quality=70/srcb64=aHR0cHM6Ly90Yi1zdGF0aWMudWJlci5jb20vcHJvZC9pbWFnZS1wcm9jL3Byb2Nlc3NlZF9pbWFnZXMvYTQyMjdjZjFlNTJjYjgzZTQzZjE2ZjhjMWNlYWI2ZTAvNzkxNWM0YTc4YTlmOTRlZDU2MzE2YzdjNGRjMGVjODkuanBlZw==";
+
   return (
     <div className="restaurant-result-box">
       <div className="header">
-        <h3>{title}</h3>
+        {/* <h3>{title}</h3> */}
         <div className="voting-thumbs">
           <span className="vote-counter">{upVoteCounter}</span>
           <Tooltip title="Up Vote the Restaurant" onClick={onUpVoteHandler}>
@@ -99,8 +102,11 @@ const RestaurantResultBox = (props) => {
             <ThumbDownIcon className="thumb" />
           </Tooltip>
         </div>
+        <div>
+          <span className="vote-counter">{upVoteCounter}</span>
+        </div>
       </div>
-      <ul>
+      {/* <ul>
         <span>4.4</span>
         <li>
           <StarIcon />
@@ -111,14 +117,38 @@ const RestaurantResultBox = (props) => {
         <li>
           <StarIcon />
         </li>
-      </ul>
+      </ul> */}
       <div className="restaurant-information">
-        <div className="restaurant-description">
+        {/* <div className="restaurant-description">
           <span>{description}</span>
-        </div>
+        </div> */}
         <div className="restaurant-image">
-          <img id="image" src={image} alt="Restaurant" />
+          <img id="image" src={imageURL} alt="Restaurant" />
         </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          position: "absolute",
+          bottom: "0",
+          width: "100%",
+        }}
+      >
+        <h3>{title}</h3>
+        <ul>
+          <span>4.4</span>
+          <li>
+            <StarIcon />
+          </li>
+          <li>
+            <StarIcon />
+          </li>
+          <li>
+            <StarIcon />
+          </li>
+        </ul>
       </div>
       {/* <li>
             <ul>Rating</ul>
@@ -133,7 +163,7 @@ const RestaurantResultBox = (props) => {
             <ul>Service 1</ul>
             <ul>Service 1</ul>
         </li> */}
-      <h3>Reviews</h3>
+      {/* <h3>Reviews</h3> */}
       {/* {reviews.map((d) => {
         return (
           <div>
@@ -153,13 +183,13 @@ const RestaurantResultBox = (props) => {
         <input onChange={onAddNewReviewHandler} placeholder="reivew.." />
         <button type="submit">Submit</button>
       </form> */}
-      <Button
+      {/* <Button
         onClick={onOpenModalHandler}
         style={{ textAlign: "left" }}
         variant="contained"
       >
         Super Eat
-      </Button>
+      </Button> */}
       <Modal
         open={modal}
         aria-labelledby="modal-modal-title"
