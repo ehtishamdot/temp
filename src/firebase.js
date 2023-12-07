@@ -1,14 +1,15 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import{getAuth} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCgHf-w0Jgf6Yq-85dvJLqBr5ZZ86yHKJE",
-  authDomain: "react-auth-7b57d.firebaseapp.com",
-  projectId: "react-auth-7b57d",
-  storageBucket: "react-auth-7b57d.appspot.com",
-  messagingSenderId: "970260360575",
-  appId: "1:970260360575:web:cac04d4df6f4371d9bfe4a"
+    apiKey: "AIzaSyDEsvEAGUe6FIENvim-zMW9FGI42oqKWwo",
+    authDomain: "seedinov-10c6d.firebaseapp.com",
+    projectId: "seedinov-10c6d",
+    storageBucket: "seedinov-10c6d.appspot.com",
+    messagingSenderId: "236955398977",
+    appId: "1:236955398977:web:a3720758783694be06e7c0",
+    measurementId: "G-BMPF4GQYBL"
 };
 
 // Initialize Firebase
