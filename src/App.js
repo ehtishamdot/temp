@@ -10,6 +10,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
 import Signup from "./components/signup";
 import Login from "./components/login";
+import Map from "./components/map";
 
 
 // UP VOTE AND DOWN VOTE
@@ -24,6 +25,7 @@ function App() {
             path="/home"
             element={
               <ProtectedRoute>
+                <Map />
                 <Sidebar />
               </ProtectedRoute>
             }

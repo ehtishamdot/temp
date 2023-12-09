@@ -54,7 +54,7 @@ const RestaurantResultBox = (props) => {
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <header style={{ border: "2px solid red", minHeight: "2rem" }}>
+      <header style={{ minHeight: "2rem" }}>
         <div >
           <span className="vote-counter">{upVoteCounter}</span>
           <Tooltip title="Up Vote the Restaurant" onClick={onUpVoteHandler}>

@@ -5,7 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter as Router } from "react-router-dom";
-
+import "bootstrap/dist/css/bootstrap.min.css";
 import { createTheme } from '@mui/material/styles';
 
 // A custom theme for this app
