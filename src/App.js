@@ -11,6 +11,7 @@ import { UserAuthContextProvider } from "./context/UserAuthContext";
 import Signup from "./components/signup";
 import Login from "./components/login";
 import Map from "./components/map";
+import TextField from '@mui/material/TextField';
 
 
 // UP VOTE AND DOWN VOTE
@@ -25,6 +26,9 @@ function App() {
             path="/home"
             element={
               <ProtectedRoute>
+                <div>
+                <TextField id="outlined-basic" label="Search restaurant" variant="outlined" style={{position:"absolute", top:"5%", zIndex:"100000", backgroundColor: "white", left: "50%", transform: "translate(-50%, -50%)"}}/>
+                </div>
                 <Map />
                 <Sidebar />
               </ProtectedRoute>
