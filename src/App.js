@@ -12,6 +12,7 @@ import Signup from "./components/signup";
 import Login from "./components/login";
 import Map from "./components/map";
 import TextField from '@mui/material/TextField';
+import RestaurantSearchInput from "./components/search-input";
 
 
 // UP VOTE AND DOWN VOTE
@@ -26,8 +27,8 @@ function App() {
             path="/home"
             element={
               <ProtectedRoute>
-                <div>
-                <TextField id="outlined-basic" label="Search restaurant" variant="outlined" style={{position:"absolute", top:"5%", zIndex:"100000", backgroundColor: "white", left: "50%", transform: "translate(-50%, -50%)"}}/>
+                <div style={{ padding: '5px', border: "40%", background: "#fff", position: "absolute", top: "4%", zIndex: "100000", backgroundColor: "white", left: "50%", transform: "translate(-50%, -50%)" }}>
+                  <RestaurantSearchInput />
                 </div>
                 <Map />
                 <Sidebar />
