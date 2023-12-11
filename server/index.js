@@ -20,6 +20,7 @@ const dbName = "restaurant";
 
 const client = new MongoClient(mongodbURL);
 const db = client.db(dbName);
+const restaurantCollection = db.collection("restaurants")
 const reviewsCollection = db.collection("reviews");
 const userCollection = db.collection("users");
 
@@ -135,6 +136,62 @@ app.post("/login", async (req, res) => {
     res.status(500).send("error loggin in");
   }
 });
+
+app.post("/restaurant", async (req, res) => {
+  try{
+    console.log(req.body);
+    restaurantCollection.insertOne(req.body, (err, result) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(result);
+    });
+    res.send(req.body);
+  } catch (err){
+    res.status(500).send("error registering restaurant");
+  }
+
+})
+
+app.get("/restaurant/all", async (req, res) => {
+  try {
+    const allReviews = await restaurantCollection.find({}).toArray();
+    res.send(allReviews);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.post("/upvote", async (req, res) => {
+  try{
+
+
+  } catch (err){
+    res.status(500).send("error registering vote");
+  }
+
+})
+
+app.post("/downvote", async (req, res) => {
+  try{
+
+
+  } catch (err){
+    res.status(500).send("error registering up vote");
+  }
+
+})
+
+app.post("/supervote", async (req, res) => {
+  try{
+
+
+  } catch (err){
+    res.status(500).send("error registering down vote");
+  }
+
+})
 
 app.listen(PORT, () => {
   console.log(`Server runnign at http://localhost:${PORT}`);
