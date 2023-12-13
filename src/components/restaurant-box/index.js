@@ -68,19 +68,39 @@ export default function RestaurantReviewCard(props) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <Tooltip title="Up Vote">
-          <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Down Vote">
-          <IconButton aria-label="add to favorites">
-            <HeartBrokenIcon />
-          </IconButton>
-        </Tooltip>
+        <div
+          style={{
+            backgroundColor: "#f1f1f1",
+            borderRadius: "10px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Tooltip title="Up Vote">
+            <IconButton aria-label="add to favorites">
+              <FavoriteIcon />
+            </IconButton>
+          </Tooltip>
+          <span style={{ paddingRight: "10px" }}>0</span>
+          <span
+            style={{
+              height: "22px",
+              background: "rgb(207 202 202)",
+              width: "2px",
+              display: "inline-block",
+            }}
+          ></span>
+          <Tooltip title="Down Vote">
+            <IconButton aria-label="add to favorites">
+              <HeartBrokenIcon />
+            </IconButton>
+          </Tooltip>
+          <span style={{ paddingRight: "10px" }}>0</span>
+        </div>
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>
+
         <Tooltip title="Super Vote">
           <ExpandMore
             expand={expanded}

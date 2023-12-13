@@ -20,7 +20,7 @@ const dbName = "restaurant";
 
 const client = new MongoClient(mongodbURL);
 const db = client.db(dbName);
-const restaurantCollection = db.collection("restaurants")
+const restaurantCollection = db.collection("restaurants");
 const reviewsCollection = db.collection("reviews");
 const userCollection = db.collection("users");
 
@@ -138,7 +138,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/restaurant", async (req, res) => {
-  try{
+  try {
     console.log(req.body);
     restaurantCollection.insertOne(req.body, (err, result) => {
       if (err) {
@@ -148,11 +148,10 @@ app.post("/restaurant", async (req, res) => {
       console.log(result);
     });
     res.send(req.body);
-  } catch (err){
-    res.status(500).send("error registering restaurant");
+  } catch (err) {
+    res.status(500).send(err);
   }
-
-})
+});
 
 app.get("/restaurant/all", async (req, res) => {
   try {
@@ -163,35 +162,42 @@ app.get("/restaurant/all", async (req, res) => {
   }
 });
 
-app.post("/upvote", async (req, res) => {
-  try{
+app.put("/upvote/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const restaurant = await restaurantCollection.findOne({
+      _id: new ObjectId(id),
+    });
 
-
-  } catch (err){
-    res.status(500).send("error registering vote");
+    const result = await restaurantCollection.updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $set: {
+          upvote: restaurant.upvote + 1,
+        },
+      }
+    );
+    res.json(result);
+  } catch (err) {
+    res.status(500).send(err);
   }
+});
 
-})
-
-app.post("/downvote", async (req, res) => {
-  try{
-
-
-  } catch (err){
+app.put("/downvote", async (req, res) => {
+  try {
+  } catch (err) {
     res.status(500).send("error registering up vote");
   }
+});
 
-})
-
-app.post("/supervote", async (req, res) => {
-  try{
-
-
-  } catch (err){
+app.put("/supervote", async (req, res) => {
+  try {
+  } catch (err) {
     res.status(500).send("error registering down vote");
   }
-
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Server runnign at http://localhost:${PORT}`);
