@@ -120,8 +120,13 @@ const RestaurantResultBox = (props) => {
     setModal(false);
   };
 
-  const onUpVoteHandler = () => {
-    setUpVoteCounter(upVoteCounter + 1);
+  const onUpVoteHandler = (id) => {
+    fetch(`http://localhost:4000/upvote/:id`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
   };
 
   const onDownVoteHandler = () => {

@@ -30,13 +30,38 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function RestaurantReviewCard(props) {
-  const { title, upVote, downVote, description, image } = props;
+  const { _id, title, upvotes, downvotes, description, image } = props;
   const [expanded, setExpanded] = React.useState(false);
+  const [upvotes_, setUpvotes_] = React.useState(Number(upvotes));
+  const [downvotes_, setDownvotes_] = React.useState(Number(downvotes));
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
+  const onUpVoteHandler = (id) => {
+    fetch(`http://localhost:4000/upvote/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setUpvotes_(upvotes_ + 1));
+  };
+
+  const onDownVoteHandler = (id) => {
+    fetch(`http://localhost:4000/downvote/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setDownvotes_(downvotes_ + 1));
+  };
+
+  
   return (
     <Card sx={{ maxWidth: 345 }}>
       {/* <CardHeader
@@ -77,11 +102,16 @@ export default function RestaurantReviewCard(props) {
           }}
         >
           <Tooltip title="Up Vote">
-            <IconButton aria-label="add to favorites">
+            <IconButton
+              onClick={() => {
+                onUpVoteHandler(_id);
+              }}
+              aria-label="add to favorites"
+            >
               <FavoriteIcon />
             </IconButton>
           </Tooltip>
-          <span style={{ paddingRight: "10px" }}>0</span>
+          <span style={{ paddingRight: "10px" }}>{upvotes_}</span>
           <span
             style={{
               height: "22px",
@@ -91,11 +121,15 @@ export default function RestaurantReviewCard(props) {
             }}
           ></span>
           <Tooltip title="Down Vote">
-            <IconButton aria-label="add to favorites">
+            <IconButton
+              onClick={() => {
+                onDownVoteHandler(_id);
+              }}
+              aria-label="add to favorites">
               <HeartBrokenIcon />
             </IconButton>
           </Tooltip>
-          <span style={{ paddingRight: "10px" }}>0</span>
+          <span style={{ paddingRight: "10px" }}>{downvotes_}</span>
         </div>
         <IconButton aria-label="share">
           <ShareIcon />

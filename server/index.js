@@ -169,13 +169,15 @@ app.put("/upvote/:id", async (req, res) => {
       _id: new ObjectId(id),
     });
 
+    console.log(restaurant)
+
     const result = await restaurantCollection.updateOne(
       {
         _id: new ObjectId(id),
       },
       {
         $set: {
-          upvote: restaurant.upvote + 1,
+          upvotes: restaurant.upvotes + 1,
         },
       }
     );
@@ -185,10 +187,28 @@ app.put("/upvote/:id", async (req, res) => {
   }
 });
 
-app.put("/downvote", async (req, res) => {
+app.put("/downvote/:id", async (req, res) => {
+  const id = req.params.id;
   try {
+    const restaurant = await restaurantCollection.findOne({
+      _id: new ObjectId(id),
+    });
+
+    console.log(restaurant)
+
+    const result = await restaurantCollection.updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $set: {
+          downvotes: restaurant.downvotes + 1,
+        },
+      }
+    );
+    res.json(result);
   } catch (err) {
-    res.status(500).send("error registering up vote");
+    res.status(500).send(err);
   }
 });
 
