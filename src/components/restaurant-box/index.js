@@ -40,7 +40,7 @@ export default function RestaurantReviewCard(props) {
   };
 
   const onUpVoteHandler = (id) => {
-    fetch(`http://localhost:4000/upvote/${id}`, {
+    fetch(`http://localhost:4000/upvote/${id}/imasud7865@gmail.com`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default function RestaurantReviewCard(props) {
   };
 
   const onDownVoteHandler = (id) => {
-    fetch(`http://localhost:4000/downvote/${id}`, {
+    fetch(`http://localhost:4000/downvote/${id}/imasud7865@gmail.com`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -10,7 +10,6 @@ import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
 
 function Sidebar() {
- 
   const settings = {
     dots: true,
     infinite: true,
@@ -22,14 +21,31 @@ function Sidebar() {
 
   const [restaurants, setRestaurants] = useState([]);
 
-  
-
   const fetchRestaurant = () => {
     fetch("http://localhost:4000/restaurant/all")
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        setRestaurants(data);
+
+        let upvotes;
+        let downvotes;
+        let supervotes;
+        const restaurantsData = data.map((d) => {
+          upvotes = d.votes?.filter((d) => d.votetype === "upvote").length;
+          downvotes = d.votes?.filter((d) => d.votetype === "downvote").length;
+          supervotes = d.votes?.filter(
+            (d) => d.votetype === "supervote"
+          ).length;
+          return {
+            ...d,
+            upvotes,
+            downvotes,
+            supervotes,
+          };
+        });
+
+        console.log(restaurantsData)
+        setRestaurants(restaurantsData);
       });
   };
   useEffect(() => {

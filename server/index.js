@@ -162,14 +162,100 @@ app.get("/restaurant/all", async (req, res) => {
   }
 });
 
-app.put("/upvote/:id", async (req, res) => {
+app.put("/upvote/:id/:email", async (req, res) => {
   const id = req.params.id;
+  const email = req.params.email;
+  try {
+    const restaurant = await restaurantCollection.findOne({
+      _id: new ObjectId(id),
+    });
+    console.log(restaurant);
+
+    const isAlreadyVotedUp = restaurant.votes.find(
+      (d) => d.email === email && d.votetype === "upvote"
+    );
+
+    const isAlreadyVotedDown = restaurant.votes.find(
+      (d) => d.email === email && d.votetype === "dowmvote"
+    );
+
+    const isAlreadySuperVoted = restaurant.votes.find(
+      (d) => d.email === email && d.votetype === "supervote"
+    );
+
+    if (isAlreadyVotedUp) {
+      res.status(500).send("User have already Voted");
+      console.log(":inside ");
+      return;
+    }
+
+    let modifiedRestaurantVotes;
+    let result;
+    if (isAlreadyVotedDown) {
+      modifiedRestaurantVotes = restaurant.map((d) => {
+        let modifiedData = d.votes;
+        if (d.votetype === "downvote" && d.email === email) {
+          modifiedData.votetype = "upvote";
+          return modifiedData;
+        } else {
+          return d;
+        }
+      });
+
+      console.log(modifiedRestaurantVotes);
+
+      return await restaurantCollection.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $set: {
+            votes: modifiedRestaurantVotes,
+          },
+        }
+      );
+    } else {
+      result = await restaurantCollection.updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $set: {
+            votes: [
+              ...restaurant.votes,
+              {
+                email,
+                votetype: "upvote",
+              },
+            ],
+          },
+        }
+      );
+      res.json(result);
+    }
+  } catch (err) {
+    res.status(500).send(err);
+    console.log(err);
+  }
+});
+
+app.put("/downvote/:id/:email", async (req, res) => {
+  const id = req.params.id;
+  const email = req.params.email;
   try {
     const restaurant = await restaurantCollection.findOne({
       _id: new ObjectId(id),
     });
 
-    console.log(restaurant)
+    console.log(restaurant);
+
+    const isAlreadyVoted = restaurant.votes.find((d) => d.email === email);
+
+    if (isAlreadyVoted) {
+      res.status(500).send("User have already Voted");
+      console.log(":inside ");
+      return;
+    }
 
     const result = await restaurantCollection.updateOne(
       {
@@ -177,7 +263,13 @@ app.put("/upvote/:id", async (req, res) => {
       },
       {
         $set: {
-          upvotes: restaurant.upvotes + 1,
+          votes: [
+            ...restaurant.votes,
+            {
+              email,
+              votetype: "downvote",
+            },
+          ],
         },
       }
     );
@@ -187,14 +279,15 @@ app.put("/upvote/:id", async (req, res) => {
   }
 });
 
-app.put("/downvote/:id", async (req, res) => {
+app.put("/supervote/:id/:email", async (req, res) => {
   const id = req.params.id;
+  const email = req.params.email;
   try {
     const restaurant = await restaurantCollection.findOne({
       _id: new ObjectId(id),
     });
 
-    console.log(restaurant)
+    console.log(restaurant);
 
     const result = await restaurantCollection.updateOne(
       {
@@ -202,20 +295,19 @@ app.put("/downvote/:id", async (req, res) => {
       },
       {
         $set: {
-          downvotes: restaurant.downvotes + 1,
+          votes: [
+            ...restaurant.votes,
+            {
+              email,
+              votetype: "supervote",
+            },
+          ],
         },
       }
     );
     res.json(result);
   } catch (err) {
     res.status(500).send(err);
-  }
-});
-
-app.put("/supervote", async (req, res) => {
-  try {
-  } catch (err) {
-    res.status(500).send("error registering down vote");
   }
 });
 
