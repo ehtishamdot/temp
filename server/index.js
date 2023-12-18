@@ -169,73 +169,53 @@ app.put("/upvote/:id/:email", async (req, res) => {
     const restaurant = await restaurantCollection.findOne({
       _id: new ObjectId(id),
     });
-    console.log(restaurant);
 
     const isAlreadyVotedUp = restaurant.votes.find(
       (d) => d.email === email && d.votetype === "upvote"
     );
 
     const isAlreadyVotedDown = restaurant.votes.find(
-      (d) => d.email === email && d.votetype === "dowmvote"
-    );
-
-    const isAlreadySuperVoted = restaurant.votes.find(
-      (d) => d.email === email && d.votetype === "supervote"
+      (d) => d.email === email && d.votetype === "downvote"
     );
 
     if (isAlreadyVotedUp) {
-      res.status(500).send("User have already Voted");
-      console.log(":inside ");
+      res.status(500).send("User has already upvoted");
       return;
     }
 
     let modifiedRestaurantVotes;
     let result;
+
     if (isAlreadyVotedDown) {
-      modifiedRestaurantVotes = restaurant.map((d) => {
-        let modifiedData = d.votes;
-        if (d.votetype === "downvote" && d.email === email) {
-          modifiedData.votetype = "upvote";
-          return modifiedData;
-        } else {
-          return d;
-        }
-      });
-
-      console.log(modifiedRestaurantVotes);
-
-      return await restaurantCollection.updateOne(
-        {
-          _id: new ObjectId(id),
-        },
-        {
-          $set: {
-            votes: modifiedRestaurantVotes,
-          },
-        }
+      // Remove the downvote
+      modifiedRestaurantVotes = restaurant.votes.filter(
+        (d) => !(d.email === email && d.votetype === "downvote")
       );
     } else {
-      result = await restaurantCollection.updateOne(
-        {
-          _id: new ObjectId(id),
-        },
-        {
-          $set: {
-            votes: [
-              ...restaurant.votes,
-              {
-                email,
-                votetype: "upvote",
-              },
-            ],
-          },
-        }
-      );
-      res.json(result);
+      // If not downvoted, keep the existing votes
+      modifiedRestaurantVotes = restaurant.votes;
     }
+
+    // Add the upvote
+    modifiedRestaurantVotes.push({
+      email,
+      votetype: "upvote",
+    });
+
+    result = await restaurantCollection.updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $set: {
+          votes: modifiedRestaurantVotes,
+        },
+      }
+    );
+
+    res.json(result);
   } catch (err) {
     res.status(500).send(err);
-    console.log(err);
   }
 });
 
@@ -247,37 +227,55 @@ app.put("/downvote/:id/:email", async (req, res) => {
       _id: new ObjectId(id),
     });
 
-    console.log(restaurant);
+    const isAlreadyVotedUp = restaurant.votes.find(
+      (d) => d.email === email && d.votetype === "upvote"
+    );
 
-    const isAlreadyVoted = restaurant.votes.find((d) => d.email === email);
+    const isAlreadyVotedDown = restaurant.votes.find(
+      (d) => d.email === email && d.votetype === "downvote"
+    );
 
-    if (isAlreadyVoted) {
-      res.status(500).send("User have already Voted");
-      console.log(":inside ");
+    if (isAlreadyVotedDown) {
+      res.status(500).send("User has already downvoted");
       return;
     }
 
-    const result = await restaurantCollection.updateOne(
+    let modifiedRestaurantVotes;
+    let result;
+
+    if (isAlreadyVotedUp) {
+      // Remove the upvote
+      modifiedRestaurantVotes = restaurant.votes.filter(
+        (d) => !(d.email === email && d.votetype === "upvote")
+      );
+    } else {
+      // If not upvoted, keep the existing votes
+      modifiedRestaurantVotes = restaurant.votes;
+    }
+
+    // Add the downvote
+    modifiedRestaurantVotes.push({
+      email,
+      votetype: "downvote",
+    });
+
+    result = await restaurantCollection.updateOne(
       {
         _id: new ObjectId(id),
       },
       {
         $set: {
-          votes: [
-            ...restaurant.votes,
-            {
-              email,
-              votetype: "downvote",
-            },
-          ],
+          votes: modifiedRestaurantVotes,
         },
       }
     );
+
     res.json(result);
   } catch (err) {
     res.status(500).send(err);
   }
 });
+
 
 app.put("/supervote/:id/:email", async (req, res) => {
   const id = req.params.id;
