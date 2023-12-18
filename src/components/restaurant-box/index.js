@@ -17,6 +17,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
 import { Tooltip } from "@mui/material";
 import LocalFireDepartmentTwoToneIcon from "@mui/icons-material/LocalFireDepartmentTwoTone";
+import MessageModal from "../message-modal";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -34,6 +35,11 @@ export default function RestaurantReviewCard(props) {
   const [expanded, setExpanded] = React.useState(false);
   const [upvotes_, setUpvotes_] = React.useState(Number(upvotes));
   const [downvotes_, setDownvotes_] = React.useState(Number(downvotes));
+  const [openMessageModal, setOpenMessageModal] = React.useState(false);
+
+  const handleOpenMessageModal = () => {
+    setOpenMessageModal(true);
+  };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -47,7 +53,9 @@ export default function RestaurantReviewCard(props) {
       },
     })
       .then((res) => res.json())
-      .then((data) => setUpvotes_(upvotes_ + 1));
+      .then((data) => {
+        setUpvotes_(upvotes_ + 1);
+      });
   };
 
   const onDownVoteHandler = (id) => {
@@ -61,7 +69,6 @@ export default function RestaurantReviewCard(props) {
       .then((data) => setDownvotes_(downvotes_ + 1));
   };
 
-  
   return (
     <Card sx={{ maxWidth: 345 }}>
       {/* <CardHeader
@@ -78,6 +85,7 @@ export default function RestaurantReviewCard(props) {
         title="Shrimp and Chorizo Paella"
         subheader="September 14, 2016"
       /> */}
+      <MessageModal open={openMessageModal} setOpen={setOpenMessageModal} />
       <CardMedia component="img" height="194" image={image} alt="Paella dish" />
       <CardContent
         sx={{ padding: "0", paddingLeft: "16px", paddingTop: "10px" }}
@@ -125,7 +133,8 @@ export default function RestaurantReviewCard(props) {
               onClick={() => {
                 onDownVoteHandler(_id);
               }}
-              aria-label="add to favorites">
+              aria-label="add to favorites"
+            >
               <HeartBrokenIcon />
             </IconButton>
           </Tooltip>
@@ -141,7 +150,7 @@ export default function RestaurantReviewCard(props) {
             aria-expanded={expanded}
             aria-label="show more"
           >
-            <LocalFireDepartmentTwoToneIcon />
+            <LocalFireDepartmentTwoToneIcon onClick={handleOpenMessageModal} />
           </ExpandMore>
         </Tooltip>
       </CardActions>
