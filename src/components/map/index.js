@@ -1,15 +1,209 @@
-import React, { useEffect, useState } from 'react';
-import { GoogleMap, useLoadScript, Marker, useMap } from '@react-google-maps/api';
+import React, { useEffect, useState } from "react";
+import {
+  GoogleMap,
+  useLoadScript,
+  Marker,
+  useMap,
+} from "@react-google-maps/api";
 
-const libraries = ['places'];
+import usePlacesAutoComplete, {
+  getGeocode,
+  getLatLng,
+} from "use-places-autocomplete";
+
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxPopover,
+  ComboboxList,
+  ComboboxOption,
+} from "@reach/combobox";
+
+const libraries = ["places"];
 const mapContainerStyle = {
-  width: '100%',
-  height: '68vh',
+  width: "100%",
+  height: "68vh",
 };
 
+const mapStyles = [
+  {
+    featureType: "all",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        weight: "2.00",
+      },
+    ],
+  },
+  {
+    featureType: "all",
+    elementType: "geometry.stroke",
+    stylers: [
+      {
+        color: "#9c9c9c",
+      },
+    ],
+  },
+  {
+    featureType: "all",
+    elementType: "labels.text",
+    stylers: [
+      {
+        visibility: "on",
+      },
+    ],
+  },
+  {
+    featureType: "landscape",
+    elementType: "all",
+    stylers: [
+      {
+        color: "#f2f2f2",
+      },
+    ],
+  },
+  {
+    featureType: "landscape",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#ffffff",
+      },
+    ],
+  },
+  {
+    featureType: "landscape.man_made",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#ffffff",
+      },
+    ],
+  },
+  {
+    featureType: "poi",
+    elementType: "all",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "all",
+    stylers: [
+      {
+        saturation: -100,
+      },
+      {
+        lightness: 45,
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#eeeeee",
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#7b7b7b",
+      },
+    ],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.stroke",
+    stylers: [
+      {
+        color: "#ffffff",
+      },
+    ],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "all",
+    stylers: [
+      {
+        visibility: "simplified",
+      },
+    ],
+  },
+  {
+    featureType: "road.arterial",
+    elementType: "labels.icon",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "transit",
+    elementType: "all",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "water",
+    elementType: "all",
+    stylers: [
+      {
+        color: "#46bcec",
+      },
+      {
+        visibility: "on",
+      },
+    ],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry.fill",
+    stylers: [
+      {
+        color: "#c8d7d4",
+      },
+    ],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [
+      {
+        color: "#070707",
+      },
+    ],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.stroke",
+    stylers: [
+      {
+        color: "#ffffff",
+      },
+    ],
+  },
+];
+
+const options = {
+  styles: mapStyles,
+  zoomControl: true,
+  disableDefaultUI: true,
+};
 const Map = () => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE',
+    googleMapsApiKey: "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE",
     libraries,
   });
 
@@ -21,14 +215,14 @@ const Map = () => {
   };
 
   const errorCallback = (error) => {
-    console.error('Error getting user location:', error);
+    console.error("Error getting user location:", error);
   };
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
     } else {
-      console.error('Geolocation is not supported by your browser');
+      console.error("Geolocation is not supported by your browser");
     }
   }, []);
 
@@ -41,14 +235,65 @@ const Map = () => {
   }
 
   return (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      zoom={currentPosition ? 18 : 6}
-      center={currentPosition || { lat: 55.3781, lng: -3.4360 }}
-    >
-      {currentPosition && <Marker position={currentPosition} />}
-    </GoogleMap>
+    <div>
+      {/* <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        zoom={currentPosition ? 18 : 6}
+        center={currentPosition || { lat: 55.3781, lng: -3.436 }}
+        options={options}
+      >
+        {currentPosition && <Marker position={currentPosition} />}
+      </GoogleMap> */}
+
+      <Search panTo={{}} />
+    </div>
   );
 };
 
 export default Map;
+
+function Search({ panTo }) {
+  const {
+    ready,
+    value,
+    suggestions: { status, data },
+    setValue,
+    clearSuggestions,
+  } = usePlacesAutoComplete({
+    requestOptions: {
+      location: { lat: () => 43.6532, lng: () => -79.3832 },
+      radius: 100 * 1000,
+    },
+  });
+
+  console.log(status, data);
+
+  const handleInput = (e) => {
+    setValue(e.target.value);
+  };
+
+  const handleSelect = async (address) => {
+    setValue(address, false);
+    clearSuggestions();
+  };
+
+  return (
+    <div className="search">
+      <Combobox onSelect={handleSelect}>
+        <ComboboxInput
+          value={value}
+          onChange={handleInput}
+          disabled={!ready}
+          placeholder="Search your restaurant"
+        />
+        <ComboboxPopover>
+          <ComboboxList>
+            {data?.map(({ id, description }) => (
+              <ComboboxOption key={id} value={description} />
+            ))}
+          </ComboboxList>
+        </ComboboxPopover>
+      </Combobox>
+    </div>
+  );
+}
