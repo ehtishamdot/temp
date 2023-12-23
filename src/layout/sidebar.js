@@ -10,6 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
 
 function Sidebar() {
+  
   const settings = {
     dots: true,
     infinite: true,

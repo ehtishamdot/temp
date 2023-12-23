@@ -18,6 +18,9 @@ import {
   ComboboxList,
   ComboboxOption,
 } from "@reach/combobox";
+import { get } from "mongoose";
+
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -207,6 +210,8 @@ const Map = () => {
     libraries,
   });
 
+  const [superVotes, setSuperVotes] = React.useState([]);
+
   const [currentPosition, setCurrentPosition] = useState(null);
 
   const successCallback = (position) => {
@@ -217,6 +222,17 @@ const Map = () => {
   const errorCallback = (error) => {
     console.error("Error getting user location:", error);
   };
+
+  const mapRef = React.useRef();
+
+  const onMapLoad = React.useCallback((map) => {
+    mapRef.current = map;
+  });
+
+  const panTo = React.useCallback(({ lat, lng }) => {
+    mapRef.current.panTo({ lat, lng });
+    mapRef.current.setZoom(18);
+  }, []);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -236,21 +252,55 @@ const Map = () => {
 
   return (
     <div>
-      {/* <GoogleMap
+      <GoogleMap
         mapContainerStyle={mapContainerStyle}
         zoom={currentPosition ? 18 : 6}
         center={currentPosition || { lat: 55.3781, lng: -3.436 }}
-        options={options}
+        // options={options}
+        onLoad={onMapLoad}
       >
+        {superVotes.map((marker) => {
+          return (
+            <Marker
+              key={`${marker.lat}-${marker.lng}`}
+              position={{ lat: marker.lat, lng: marker.lng }}
+              onClick={() => {
+                  
+              }}    
+            />
+          );
+        })}
         {currentPosition && <Marker position={currentPosition} />}
-      </GoogleMap> */}
+      </GoogleMap>
 
-      <Search panTo={{}} />
+      <Search panTo={panTo} />
+      <Locate panTo={panTo} />
     </div>
   );
 };
 
 export default Map;
+
+function Locate({ panTo }) {
+  return (
+    <button
+      className="locate"
+      onClick={() => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            panTo({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          },
+          () => null
+        );
+      }}
+    >
+      <FavoriteIcon />
+    </button>
+  );
+}
 
 function Search({ panTo }) {
   const {
@@ -275,6 +325,14 @@ function Search({ panTo }) {
   const handleSelect = async (address) => {
     setValue(address, false);
     clearSuggestions();
+
+    try {
+      const results = await getGeocode({ address });
+      const { lat, lng } = await getLatLng(results[0]);
+      panTo({ lat, lng });
+    } catch (error) {
+      console.log("Error: ", error);
+    }
   };
 
   return (
