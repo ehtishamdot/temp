@@ -11,35 +11,61 @@ import { UserAuthContextProvider } from "./context/UserAuthContext";
 import Signup from "./components/signup";
 import Login from "./components/login";
 import Map from "./components/map";
-import TextField from '@mui/material/TextField';
+import TextField from "@mui/material/TextField";
 import RestaurantSearchInput from "./components/search-input";
-
+import {
+  RestaurantContextProvider,
+  useRestaurant,
+} from "./context/RestuaurantContext";
+import { useEffect } from "react";
 
 // UP VOTE AND DOWN VOTE
 function App() {
+  const data = useRestaurant();
+
+  console.log(data)
+
+  useEffect(() => {
+    // data.fetchRestaurant();
+  }, []);
+
+  // useContext(REsta)
 
   return (
     <div className="App">
       {/* <Voting /> */}
-      <UserAuthContextProvider>
-        <Routes>
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute>
-                <div style={{ padding: '5px', border: "40%", background: "#fff", position: "absolute", top: "4%", zIndex: "100000", backgroundColor: "white", left: "50%", transform: "translate(-50%, -50%)" }}>
-                  <RestaurantSearchInput />
-                </div>
-                <Map />
-                <Sidebar />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-        </Routes>
-      </UserAuthContextProvider>
-
+      <RestaurantContextProvider>
+        <UserAuthContextProvider>
+          <Routes>
+            <Route
+              path="/home"
+              element={
+                <ProtectedRoute>
+                  <div
+                    style={{
+                      padding: "5px",
+                      border: "40%",
+                      background: "#fff",
+                      position: "absolute",
+                      top: "4%",
+                      zIndex: "100000",
+                      backgroundColor: "white",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                    }}
+                  >
+                    <RestaurantSearchInput />
+                  </div>
+                  <Map />
+                  <Sidebar />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
+        </UserAuthContextProvider>
+      </RestaurantContextProvider>
     </div>
   );
 }

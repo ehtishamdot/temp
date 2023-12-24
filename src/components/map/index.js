@@ -4,6 +4,7 @@ import {
   useLoadScript,
   Marker,
   useMap,
+  InfoWindow,
 } from "@react-google-maps/api";
 
 import usePlacesAutoComplete, {
@@ -211,8 +212,22 @@ const Map = () => {
   });
 
   const [superVotes, setSuperVotes] = React.useState([]);
+  const [selected, setSelected] = React.useState(null);
 
   const [currentPosition, setCurrentPosition] = useState(null);
+
+  const onMapClick = React.useCallback((e) => {
+    setSuperVotes((current) => [
+      ...current,
+      {
+        lat: e.latLng.lat(),
+        lng: e.latLng.lng(),
+        time: new Date(),
+      },
+    ]);
+  }, []);
+
+  console.log(selected);
 
   const successCallback = (position) => {
     const { latitude, longitude } = position.coords;
@@ -257,6 +272,7 @@ const Map = () => {
         zoom={currentPosition ? 18 : 6}
         center={currentPosition || { lat: 55.3781, lng: -3.436 }}
         // options={options}
+        onClick={onMapClick}
         onLoad={onMapLoad}
       >
         {superVotes.map((marker) => {
@@ -265,12 +281,29 @@ const Map = () => {
               key={`${marker.lat}-${marker.lng}`}
               position={{ lat: marker.lat, lng: marker.lng }}
               onClick={() => {
-                  
-              }}    
+                setSelected(marker);
+              }}
+              // icon={{
+              //   url: "/supervotes.svg"
+              // }}
             />
           );
         })}
         {currentPosition && <Marker position={currentPosition} />}
+        {selected ? (
+          <InfoWindow
+            position={{ lat: selected.lat, lng: selected.lng }}
+            onCloseClick={() => {
+              setSelected(null);
+            }}
+          >
+            <div>
+              <h2>
+                <span>Alert</span>
+              </h2>
+            </div>
+          </InfoWindow>
+        ) : null}
       </GoogleMap>
 
       <Search panTo={panTo} />
