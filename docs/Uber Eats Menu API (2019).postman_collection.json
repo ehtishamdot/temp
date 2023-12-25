@@ -1,0 +1,580 @@
+{
+	"info": {
+		"_postman_id": "0f21c4b2-2007-4445-adfb-b168c45bc2bb",
+		"name": "Uber Eats Menu API (2019)",
+		"description": "This collection demonstrates all of the endpoints supported by the **Uber Eats Menu API**.\n\n** third-partyto Access to These APIs May Require Written Approval From Uber**\n\nUber’s APIs are always under development and as such are subject to changes according to our Versioning & Upgrade policy. As part of Uber’s ongoing privacy improvements, we’ve updated our Developer API program with new scope access policies for third party applications. For further information, please refer to our Getting Started guides.\n\nThis *Get Menu* endpoint allows a developer pull the entire menu for a specific store. Note, this response may be very large.\n\n#### [¶](https://developer.uber.com/docs/eats/api/v2/get-eats-stores-storeid-menus#authorization) Authorization\n\nOAuth 2.0 Bearer token with the `eats.store` scope. For more information, see [Authentication](https://developer.uber.com/docs/eats/guides/authentication).\n\n##### [¶](https://developer.uber.com/docs/eats/api/v2/get-eats-stores-storeid-menus#encoding) Encoding\n\nThe response payload for this endpoint may be very large. We highly recommend the use of a standard HTTP compression algorithm to optimise bandwidth usage and processing time. To opt-in, please add the following header:\n\nThe following environment variables are required to generate access tokens, and can be found in the Developer Dashboard (use the **Uber Eats APIs** environment template):\n\n*   `uber_api_client_id`\n*   `uber_api_client_secret`",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25023172",
+		"_collection_link": "https://web.postman.co/workspace/ByteCorp~ceddf030-1427-45d8-afca-57d68b775e4c/collection/25023172-0f21c4b2-2007-4445-adfb-b168c45bc2bb?action=share&source=collection_link&creator=25023172"
+	},
+	"item": [
+		{
+			"name": "Do First: Generate Access Token - eats.store",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Response contains 'access_token'\"] = jsonData.hasOwnProperty(\"access_token\");",
+							"postman.setEnvironmentVariable(\"eats_store_token\", jsonData.access_token);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{uber_api_client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{uber_api_client_secret}}",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "eats.store",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.uber.com/oauth/v2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"uber",
+						"com"
+					],
+					"path": [
+						"oauth",
+						"v2",
+						"token"
+					]
+				},
+				"description": "Ensure your environment has a `client_id` and `client_secret` environment variable."
+			},
+			"response": []
+		},
+		{
+			"name": "Do First: Generate Access Token - eats.store.status.write",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Response contains 'access_token'\"] = jsonData.hasOwnProperty(\"access_token\");",
+							"postman.setEnvironmentVariable(\"eats_store_status_write_token\", jsonData.access_token);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{uber_api_client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{uber_api_client_secret}}",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": " eats.store.status.write",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.uber.com/oauth/v2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"uber",
+						"com"
+					],
+					"path": [
+						"oauth",
+						"v2",
+						"token"
+					]
+				},
+				"description": "Ensure your environment has a `client_id` and `client_secret` environment variable."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Store Details (eats.store)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Successful Request\"] = responseCode.code === 204"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://api.uber.com/v1/eats/stores/{{eats_store_id}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v1",
+						"eats",
+						"stores",
+						"{{eats_store_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Menu (eats.store)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://api.uber.com/v2/eats/stores/{{eats_store_id}}/menus",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v2",
+						"eats",
+						"stores",
+						"{{eats_store_id}}",
+						"menus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Menu - Empty (eats.store)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"items\": [],\n    \"menus\": [],\n    \"categories\": [],\n    \"modifier_groups\": [],\n    \"display_options\": {\n        \"disable_item_instructions\": true\n    }\n}"
+				},
+				"url": {
+					"raw": "https://api.uber.com/v2/eats/stores/{{eats_store_id}}/menus",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v2",
+						"eats",
+						"stores",
+						"{{eats_store_id}}",
+						"menus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Menu - Simple Menu (eats.store)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"items\": [\n        {\n            \"description\": {\n                \"translations\": {\n                    \"en_us\": \"Deliciously roasted beans\"\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Coffee\"\n                }\n            },\n            \"nutritional_info\": {\n                \"allergens\": null,\n                \"kilojoules\": null,\n                \"calories\": null\n            },\n            \"quantity_info\": null,\n            \"external_data\": \"External data for coffee\",\n            \"suspension_info\": null,\n            \"modifier_group_ids\": {\n                \"overrides\": [],\n                \"ids\": [\n                    \"Add-milk\",\n                    \"Add-sugar\"\n                ]\n            },\n            \"image_url\": null,\n            \"price_info\": {\n                \"price\": 300,\n                \"overrides\": []\n            },\n            \"tax_info\": {\n                \"tax_rate\": 8,\n                \"vat_rate_percentage\": null\n            },\n            \"id\": \"Coffee\"\n        },\n        {\n            \"description\": {\n                \"translations\": {\n                    \"en_us\": \"\"\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Blueberry\"\n                }\n            },\n            \"nutritional_info\": {\n                \"allergens\": null,\n                \"kilojoules\": null,\n                \"calories\": null\n            },\n            \"quantity_info\": {\n                \"overrides\": [\n                    {\n                        \"context_type\": \"MODIFIER_GROUP\",\n                        \"context_value\": \"Choose-flavor\",\n                        \"quantity\": {\n                            \"max_permitted\": 1,\n                            \"min_permitted\": null,\n                            \"default_quantity\": null,\n                            \"charge_above\": null,\n                            \"refund_under\": null\n                        }\n                    }\n                ],\n                \"quantity\": null\n            },\n            \"external_data\": \"External data for blueberry flavor\",\n            \"suspension_info\": null,\n            \"modifier_group_ids\": {\n                \"overrides\": [],\n                \"ids\": null\n            },\n            \"image_url\": null,\n            \"price_info\": {\n                \"price\": 0,\n                \"overrides\": [\n                    {\n                        \"context_type\": \"MODIFIER_GROUP\",\n                        \"context_value\": \"Choose-flavor\",\n                        \"price\": 0\n                    }\n                ]\n            },\n            \"tax_info\": {\n                \"tax_rate\": 8,\n                \"vat_rate_percentage\": null\n            },\n            \"id\": \"Blueberry\"\n        },\n        {\n            \"description\": {\n                \"translations\": {\n                    \"en_us\": \"Great for afternoon snack time!\"\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Fresh-baked muffin\"\n                }\n            },\n            \"nutritional_info\": {\n                \"allergens\": null,\n                \"kilojoules\": null,\n                \"calories\": null\n            },\n            \"quantity_info\": null,\n            \"external_data\": \"External data for muffin\",\n            \"suspension_info\": null,\n            \"modifier_group_ids\": {\n                \"overrides\": [],\n                \"ids\": [\n                    \"Choose-flavor\"\n                ]\n            },\n            \"image_url\": null,\n            \"price_info\": {\n                \"price\": 300,\n                \"overrides\": []\n            },\n            \"tax_info\": {\n                \"tax_rate\": 8,\n                \"vat_rate_percentage\": null\n            },\n            \"id\": \"Muffin\"\n        },\n        {\n            \"description\": {\n                \"translations\": {\n                    \"en_us\": \"\"\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Sugar\"\n                }\n            },\n            \"nutritional_info\": {\n                \"allergens\": null,\n                \"kilojoules\": null,\n                \"calories\": null\n            },\n            \"quantity_info\": {\n                \"overrides\": [\n                    {\n                        \"context_type\": \"MODIFIER_GROUP\",\n                        \"context_value\": \"Add-sugar\",\n                        \"quantity\": {\n                            \"max_permitted\": 2,\n                            \"min_permitted\": null,\n                            \"default_quantity\": null,\n                            \"charge_above\": null,\n                            \"refund_under\": null\n                        }\n                    }\n                ],\n                \"quantity\": null\n            },\n            \"external_data\": \"External data for sugar\",\n            \"suspension_info\": null,\n            \"modifier_group_ids\": {\n                \"overrides\": [],\n                \"ids\": null\n            },\n            \"image_url\": null,\n            \"price_info\": {\n                \"price\": 0,\n                \"overrides\": [\n                    {\n                        \"context_type\": \"MODIFIER_GROUP\",\n                        \"context_value\": \"Add-sugar\",\n                        \"price\": 0\n                    }\n                ]\n            },\n            \"tax_info\": {\n                \"tax_rate\": 8,\n                \"vat_rate_percentage\": null\n            },\n            \"id\": \"Sugar\"\n        },\n        {\n            \"description\": {\n                \"translations\": {\n                    \"en_us\": \"\"\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Chocolate deluxe\"\n                }\n            },\n            \"nutritional_info\": {\n                \"allergens\": null,\n                \"kilojoules\": null,\n                \"calories\": null\n            },\n            \"quantity_info\": {\n                \"overrides\": [\n                    {\n                        \"context_type\": \"MODIFIER_GROUP\",\n                        \"context_value\": \"Choose-flavor\",\n                        \"quantity\": {\n                            \"max_permitted\": 1,\n                            \"min_permitted\": null,\n                            \"default_quantity\": null,\n                            \"charge_above\": null,\n                            \"refund_under\": null\n                        }\n                    }\n                ],\n                \"quantity\": null\n            },\n            \"external_data\": \"External data for chocolate deluxe flavor\",\n            \"suspension_info\": null,\n            \"modifier_group_ids\": {\n                \"overrides\": [],\n                \"ids\": null\n            },\n            \"image_url\": null,\n            \"price_info\": {\n                \"price\": 50,\n                \"overrides\": [\n                    {\n                        \"context_type\": \"MODIFIER_GROUP\",\n                        \"context_value\": \"Choose-flavor\",\n                        \"price\": 50\n                    }\n                ]\n            },\n            \"tax_info\": {\n                \"tax_rate\": 8,\n                \"vat_rate_percentage\": null\n            },\n            \"id\": \"Chocolate-deluxe\"\n        },\n        {\n            \"description\": {\n                \"translations\": {\n                    \"en_us\": \"\"\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Milk\"\n                }\n            },\n            \"nutritional_info\": {\n                \"allergens\": null,\n                \"kilojoules\": null,\n                \"calories\": null\n            },\n            \"quantity_info\": {\n                \"overrides\": [\n                    {\n                        \"context_type\": \"MODIFIER_GROUP\",\n                        \"context_value\": \"Add-milk\",\n                        \"quantity\": {\n                            \"max_permitted\": 1,\n                            \"min_permitted\": null,\n                            \"default_quantity\": null,\n                            \"charge_above\": null,\n                            \"refund_under\": null\n                        }\n                    }\n                ],\n                \"quantity\": null\n            },\n            \"external_data\": \"External data for milk\",\n            \"suspension_info\": null,\n            \"modifier_group_ids\": {\n                \"overrides\": [],\n                \"ids\": null\n            },\n            \"image_url\": null,\n            \"price_info\": {\n                \"price\": 0,\n                \"overrides\": [\n                    {\n                        \"context_type\": \"MODIFIER_GROUP\",\n                        \"context_value\": \"Add-milk\",\n                        \"price\": 0\n                    }\n                ]\n            },\n            \"tax_info\": {\n                \"tax_rate\": 8,\n                \"vat_rate_percentage\": null\n            },\n            \"id\": \"Milk\"\n        },\n        {\n            \"description\": {\n                \"translations\": {\n                    \"en_us\": \"A soothing cuppa\"\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Tea\"\n                }\n            },\n            \"nutritional_info\": {\n                \"allergens\": null,\n                \"kilojoules\": null,\n                \"calories\": null\n            },\n            \"quantity_info\": null,\n            \"external_data\": \"External data for tea\",\n            \"suspension_info\": null,\n            \"modifier_group_ids\": {\n                \"overrides\": [],\n                \"ids\": [\n                    \"Add-milk\",\n                    \"Add-sugar\"\n                ]\n            },\n            \"image_url\": null,\n            \"price_info\": {\n                \"price\": 250,\n                \"overrides\": []\n            },\n            \"tax_info\": {\n                \"tax_rate\": 8,\n                \"vat_rate_percentage\": null\n            },\n            \"id\": \"Tea\"\n        },\n        {\n            \"description\": {\n                \"translations\": {\n                    \"en_us\": \"Whole grain bread, grilled chicken and salad\"\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Chicken sandwich\"\n                }\n            },\n            \"nutritional_info\": {\n                \"allergens\": null,\n                \"kilojoules\": null,\n                \"calories\": null\n            },\n            \"quantity_info\": null,\n            \"external_data\": \"External data for chicken sandwich\",\n            \"suspension_info\": null,\n            \"modifier_group_ids\": {\n                \"overrides\": [],\n                \"ids\": null\n            },\n            \"image_url\": null,\n            \"price_info\": {\n                \"price\": 700,\n                \"overrides\": []\n            },\n            \"tax_info\": {\n                \"tax_rate\": 8,\n                \"vat_rate_percentage\": null\n            },\n            \"id\": \"Chicken-sandwich\"\n        }\n    ],\n    \"display_options\": {\n        \"disable_item_instructions\": true\n    },\n    \"menus\": [\n        {\n            \"service_availability\": [\n                {\n                    \"time_periods\": [\n                        {\n                            \"start_time\": \"00:00\",\n                            \"end_time\": \"23:59\"\n                        }\n                    ],\n                    \"day_of_week\": \"monday\"\n                },\n                {\n                    \"time_periods\": [\n                        {\n                            \"start_time\": \"00:00\",\n                            \"end_time\": \"23:59\"\n                        }\n                    ],\n                    \"day_of_week\": \"tuesday\"\n                },\n                {\n                    \"time_periods\": [\n                        {\n                            \"start_time\": \"00:00\",\n                            \"end_time\": \"23:59\"\n                        }\n                    ],\n                    \"day_of_week\": \"wednesday\"\n                },\n                {\n                    \"time_periods\": [\n                        {\n                            \"start_time\": \"00:00\",\n                            \"end_time\": \"23:59\"\n                        }\n                    ],\n                    \"day_of_week\": \"thursday\"\n                },\n                {\n                    \"time_periods\": [\n                        {\n                            \"start_time\": \"00:00\",\n                            \"end_time\": \"23:59\"\n                        }\n                    ],\n                    \"day_of_week\": \"friday\"\n                },\n                {\n                    \"time_periods\": [\n                        {\n                            \"start_time\": \"00:00\",\n                            \"end_time\": \"23:59\"\n                        }\n                    ],\n                    \"day_of_week\": \"saturday\"\n                },\n                {\n                    \"time_periods\": [\n                        {\n                            \"start_time\": \"00:00\",\n                            \"end_time\": \"23:59\"\n                        }\n                    ],\n                    \"day_of_week\": \"sunday\"\n                }\n            ],\n            \"category_ids\": [\n                \"Sandwiches\",\n                \"Snacks\",\n                \"Drinks\"\n            ],\n            \"id\": \"All-day\",\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"All day\"\n                }\n            }\n        }\n    ],\n    \"categories\": [\n        {\n            \"entities\": [\n                {\n                    \"type\": \"ITEM\",\n                    \"id\": \"Muffin\"\n                }\n            ],\n            \"id\": \"Snacks\",\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Snacks\"\n                }\n            }\n        },\n        {\n            \"entities\": [\n                {\n                    \"type\": \"ITEM\",\n                    \"id\": \"Chicken-sandwich\"\n                }\n            ],\n            \"id\": \"Sandwiches\",\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Sandwiches\"\n                }\n            }\n        },\n        {\n            \"entities\": [\n                {\n                    \"type\": \"ITEM\",\n                    \"id\": \"Coffee\"\n                },\n                {\n                    \"type\": \"ITEM\",\n                    \"id\": \"Tea\"\n                }\n            ],\n            \"id\": \"Drinks\",\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Drinks\"\n                }\n            }\n        }\n    ],\n    \"modifier_groups\": [\n        {\n            \"quantity_info\": {\n                \"overrides\": [],\n                \"quantity\": {\n                    \"max_permitted\": 2,\n                    \"min_permitted\": null,\n                    \"default_quantity\": null,\n                    \"charge_above\": null,\n                    \"refund_under\": null\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Add sugar\"\n                }\n            },\n            \"external_data\": \"External data for sugar choice\",\n            \"modifier_options\": [\n                {\n                    \"type\": \"ITEM\",\n                    \"id\": \"Sugar\"\n                }\n            ],\n            \"display_type\": null,\n            \"id\": \"Add-sugar\"\n        },\n        {\n            \"quantity_info\": {\n                \"overrides\": [],\n                \"quantity\": {\n                    \"max_permitted\": 1,\n                    \"min_permitted\": 1,\n                    \"default_quantity\": null,\n                    \"charge_above\": null,\n                    \"refund_under\": null\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Choose flavor\"\n                }\n            },\n            \"external_data\": \"External data for muffin flavor choice\",\n            \"modifier_options\": [\n                {\n                    \"type\": \"ITEM\",\n                    \"id\": \"Blueberry\"\n                },\n                {\n                    \"type\": \"ITEM\",\n                    \"id\": \"Chocolate-deluxe\"\n                }\n            ],\n            \"display_type\": null,\n            \"id\": \"Choose-flavor\"\n        },\n        {\n            \"quantity_info\": {\n                \"overrides\": [],\n                \"quantity\": {\n                    \"max_permitted\": 1,\n                    \"min_permitted\": null,\n                    \"default_quantity\": null,\n                    \"charge_above\": null,\n                    \"refund_under\": null\n                }\n            },\n            \"title\": {\n                \"translations\": {\n                    \"en_us\": \"Add milk\"\n                }\n            },\n            \"external_data\": \"External data for milk choice\",\n            \"modifier_options\": [\n                {\n                    \"type\": \"ITEM\",\n                    \"id\": \"Milk\"\n                }\n            ],\n            \"display_type\": null,\n            \"id\": \"Add-milk\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://api.uber.com/v2/eats/stores/{{eats_store_id}}/menus",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v2",
+						"eats",
+						"stores",
+						"{{eats_store_id}}",
+						"menus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Item (eats.store)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"suspension_info\": {\n    \"suspension\": {\n    \t\"suspend_until\": 8640000000,\n    \t\"reason\": \"sold out\"\n    }\n  }\n}"
+				},
+				"url": {
+					"raw": "https://api.uber.com/v2/eats/stores/{{eats_store_id}}/menus/items/{{eats_menu_item_id}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v2",
+						"eats",
+						"stores",
+						"{{eats_store_id}}",
+						"menus",
+						"items",
+						"{{eats_menu_item_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Restaurant Status (eats.store.status.write)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Successful Request\"] = responseCode.code === 204;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_status_write_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"PAUSED\"\n}"
+				},
+				"url": {
+					"raw": "https://api.uber.com/v1/eats/store/{{eats_store_id}}/status",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v1",
+						"eats",
+						"store",
+						"{{eats_store_id}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get POS Status (eats.store)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Successful Request\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}"
+					}
+				],
+				"url": {
+					"raw": "https://api.uber.com/v1/eats/stores/{{eats_store_id}}/pos_data",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v1",
+						"eats",
+						"stores",
+						"{{eats_store_id}}",
+						"pos_data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update POS Status (eats.store)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Successful Request\"] = responseCode.code === 204;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"pos_integration_enabled\": true,\n    \"order_release_enabled\": false\n}"
+				},
+				"url": {
+					"raw": "https://api.uber.com/v1/eats/stores/{{eats_store_id}}/pos_data",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v1",
+						"eats",
+						"stores",
+						"{{eats_store_id}}",
+						"pos_data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Store Holiday Hours (eats.store)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Successful Request\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}"
+					}
+				],
+				"url": {
+					"raw": "https://api.uber.com/v1/eats/stores/{{eats_store_id}}/holiday-hours",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v1",
+						"eats",
+						"stores",
+						"{{eats_store_id}}",
+						"holiday-hours"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Store Holiday Hours (eats.store)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Successful Request\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{eats_store_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"holiday_hours\": {\n        \"2019-12-10\": {\n            \"open_time_periods\": [\n                {\n                    \"start_time\": \"00:00\",\n                    \"end_time\": \"16:00\"\n                },\n                {\n                    \"start_time\": \"18:00\",\n                    \"end_time\": \"23:30\"\n                }\n            ]\n        },\n        \"2019-12-11\": {\n            \"open_time_periods\": [\n                {\n                    \"start_time\": \"00:00\",\n                    \"end_time\": \"23:59\"\n                }\n            ]\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "https://api.uber.com/v1/eats/stores/{{eats_store_id}}/holiday-hours",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uber",
+						"com"
+					],
+					"path": [
+						"v1",
+						"eats",
+						"stores",
+						"{{eats_store_id}}",
+						"holiday-hours"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

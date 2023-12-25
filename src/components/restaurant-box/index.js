@@ -18,6 +18,7 @@ import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
 import { Tooltip } from "@mui/material";
 import LocalFireDepartmentTwoToneIcon from "@mui/icons-material/LocalFireDepartmentTwoTone";
 import MessageModal from "../message-modal";
+import ViewRestaurant from "../drawer";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -36,6 +37,8 @@ export default function RestaurantReviewCard(props) {
   const [upvotes_, setUpvotes_] = React.useState(Number(upvotes));
   const [downvotes_, setDownvotes_] = React.useState(Number(downvotes));
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
+  const [isViewRestaurant, setIsViewRestaurant] = React.useState(false);
+
 
   const handleOpenMessageModal = () => {
     setOpenMessageModal(true);
@@ -85,6 +88,7 @@ export default function RestaurantReviewCard(props) {
         title="Shrimp and Chorizo Paella"
         subheader="September 14, 2016"
       /> */}
+      <ViewRestaurant />
       <MessageModal open={openMessageModal} setOpen={setOpenMessageModal} />
       <CardMedia component="img" height="194" image={image} alt="Paella dish" />
       <CardContent

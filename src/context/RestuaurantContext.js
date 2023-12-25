@@ -35,7 +35,7 @@ export function RestaurantContextProvider({ children }) {
   };
 
   return (
-    <RestaurantContext.Provider value={{ fetchRestaurant}}>
+    <RestaurantContext.Provider value={{ fetchRestaurant, restaurants }}>
       {children}
     </RestaurantContext.Provider>
   );

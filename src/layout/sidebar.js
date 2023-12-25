@@ -8,9 +8,16 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
+import { useRestaurant } from "../context/RestuaurantContext";
 
 function Sidebar() {
-  
+
+  const { restaurants, fetchRestaurant } = useRestaurant()
+
+  useEffect(() => {
+    fetchRestaurant()
+  }, [])
+
   const settings = {
     dots: true,
     infinite: true,
@@ -20,38 +27,36 @@ function Sidebar() {
     centerPadding: "50px",
   };
 
-  const [restaurants, setRestaurants] = useState([]);
+  // const fetchRestaurant = () => {
+  //   fetch("http://localhost:4000/restaurant/all")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log(data);
 
-  const fetchRestaurant = () => {
-    fetch("http://localhost:4000/restaurant/all")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+  //       let upvotes;
+  //       let downvotes;
+  //       let supervotes;
+  //       const restaurantsData = data.map((d) => {
+  //         upvotes = d.votes?.filter((d) => d.votetype === "upvote").length;
+  //         downvotes = d.votes?.filter((d) => d.votetype === "downvote").length;
+  //         supervotes = d.votes?.filter(
+  //           (d) => d.votetype === "supervote"
+  //         ).length;
+  //         return {
+  //           ...d,
+  //           upvotes,
+  //           downvotes,
+  //           supervotes,
+  //         };
+  //       });
 
-        let upvotes;
-        let downvotes;
-        let supervotes;
-        const restaurantsData = data.map((d) => {
-          upvotes = d.votes?.filter((d) => d.votetype === "upvote").length;
-          downvotes = d.votes?.filter((d) => d.votetype === "downvote").length;
-          supervotes = d.votes?.filter(
-            (d) => d.votetype === "supervote"
-          ).length;
-          return {
-            ...d,
-            upvotes,
-            downvotes,
-            supervotes,
-          };
-        });
-
-        console.log(restaurantsData)
-        setRestaurants(restaurantsData);
-      });
-  };
-  useEffect(() => {
-    fetchRestaurant();
-  }, []);
+  //       console.log(restaurantsData)
+  //       setRestaurants(restaurantsData);
+  //     });
+  // };
+  // useEffect(() => {
+  //   fetchRestaurant();
+  // }, []);
 
   return (
     <div className="sidebar">

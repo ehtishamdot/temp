@@ -21,9 +21,7 @@ import { useEffect } from "react";
 
 // UP VOTE AND DOWN VOTE
 function App() {
-  const data = useRestaurant();
 
-  console.log(data)
 
   useEffect(() => {
     // data.fetchRestaurant();
@@ -34,8 +32,8 @@ function App() {
   return (
     <div className="App">
       {/* <Voting /> */}
-      <RestaurantContextProvider>
-        <UserAuthContextProvider>
+      <UserAuthContextProvider>
+        <RestaurantContextProvider>
           <Routes>
             <Route
               path="/home"
@@ -64,8 +62,8 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Routes>
-        </UserAuthContextProvider>
-      </RestaurantContextProvider>
+        </RestaurantContextProvider>
+      </UserAuthContextProvider>
     </div>
   );
 }
