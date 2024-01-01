@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
 import { useRestaurant } from "../context/RestuaurantContext";
-import axios from "axios";
+// import axios from "axios";
 
 function Sidebar() {
   const { restaurants, fetchRestaurant, fetchPlacesData, placesData } = useRestaurant();

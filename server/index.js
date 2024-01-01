@@ -159,25 +159,53 @@ app.get("/restaurant/all", async (req, res) => {
     const latitude = "37.7749";
     const longitude = "-122.4194";
     const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant&key=${apiKey}`;
-    let fetchedRestaurants;
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        fetchedRestaurants = data;
-      });
-    const allRestaurantsVotes = await restaurantCollection.find({}).toArray();
-    const restaurantsData = allRestaurantsVotes.map((data) => {
-      const googleRes = fetchedRestaurants.find(
-        (v) => data._id === v.reference
+
+    const response = await fetch(apiUrl);
+    const fetchedRestaurants = await response.json();
+
+    const allRestaurantsVotes = await restaurantCollection.find({}).toArray(); 
+
+    const restaurantsData = await Promise.all(fetchedRestaurants?.results?.map(async (data) => {
+      const existingRestaurant = allRestaurantsVotes.find(
+        (v) => data.reference === v.reference
       );
 
+      if (!existingRestaurant) {
+        try {
+          const result = await restaurantCollection.insertOne({
+            reference: data.reference,
+            upvote: 0,
+            downvote: 0,
+            supervote: 0,
+          });
+          console.log("New restaurant inserted:", result);
+
+          const newRes = await restaurantCollection.findOne(({
+            _id: result.insertedId,
+          }))
+
+          return {
+            voting: newRes,
+            data,
+          };
+        } catch (err) {
+          console.error("Error inserting new restaurant:", err);
+          return {
+            voting: null,
+            data,
+          };
+        }
+      }
+
       return {
-        googleRes,
+        voting: existingRestaurant,
         data,
       };
-    });
-    res.send(allRestaurantsVotes);
+    }));
+
+    // Send the response
+    res.json(restaurantsData);
+
   } catch (err) {
     console.log(err);
   }
