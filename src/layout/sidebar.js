@@ -12,10 +12,11 @@ import { useRestaurant } from "../context/RestuaurantContext";
 import axios from "axios";
 
 function Sidebar() {
-  const { restaurants, fetchRestaurant } = useRestaurant();
+  const { restaurants, fetchRestaurant, fetchPlacesData, placesData } = useRestaurant();
 
   useEffect(() => {
     fetchRestaurant();
+    fetchPlacesData();
   }, []);
 
   const settings = {
@@ -58,29 +59,8 @@ function Sidebar() {
   //   fetchRestaurant();
   // }, []);
 
-  const [placesData, setPlacesData] = useState(null);
-  useEffect(() => {
-    const apiKey = "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE";
-    const latitude = "37.7749";
-    const longitude = "-122.4194";
-
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant&key=${apiKey}`;
-    // axios
-    //   .get(apiUrl)
-    //   .then(function (response) {
-    //     console.log(response);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setPlacesData(data);
-      });
-  }, []);
-  
+ 
+ 
   const onSSOUberEats = () => {
     fetch(
       "https://login.uber.com/oauth/v2/authorize?client_id=Aaytalvpv2KDaXJXZl4bN46_i33Bl4T7&response_type=code&redirect_uri=http://localhost:3000/home"
@@ -122,13 +102,13 @@ function Sidebar() {
           <div></div>
         )} */}
       </div>
-      <div>
+      {/* <div>
         {placesData?.results.map((data) => {
           return <div>
         {data.name}
           </div>
         })}
-      </div>
+      </div> */}
     </div>
   );
 }

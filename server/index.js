@@ -155,8 +155,29 @@ app.post("/restaurant", async (req, res) => {
 
 app.get("/restaurant/all", async (req, res) => {
   try {
-    const allReviews = await restaurantCollection.find({}).toArray();
-    res.send(allReviews);
+    const apiKey = "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE";
+    const latitude = "37.7749";
+    const longitude = "-122.4194";
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant&key=${apiKey}`;
+    let fetchedRestaurants;
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        fetchedRestaurants = data;
+      });
+    const allRestaurantsVotes = await restaurantCollection.find({}).toArray();
+    const restaurantsData = allRestaurantsVotes.map((data) => {
+      const googleRes = fetchedRestaurants.find(
+        (v) => data._id === v.reference
+      );
+
+      return {
+        googleRes,
+        data,
+      };
+    });
+    res.send(allRestaurantsVotes);
   } catch (err) {
     console.log(err);
   }
@@ -212,6 +233,18 @@ app.put("/upvote/:id/:email", async (req, res) => {
         },
       }
     );
+
+    const updatedRestaurant = await restaurantCollection.findOne({
+      _id: new ObjectId(id),
+    });
+    const updatedUpvotes = updatedRestaurant.votes.filter(
+      (vote) => vote.votetype === "upvote"
+    ).length;
+    const updatedDownvotes = updatedRestaurant.votes.filter(
+      (vote) => vote.votetype === "downvote"
+    ).length;
+
+    res.json({ result, upvotes: updatedUpvotes, downvotes: updatedDownvotes });
 
     res.json(result);
   } catch (err) {
@@ -275,7 +308,6 @@ app.put("/downvote/:id/:email", async (req, res) => {
     res.status(500).send(err);
   }
 });
-
 
 app.put("/supervote/:id/:email", async (req, res) => {
   const id = req.params.id;

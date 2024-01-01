@@ -39,7 +39,6 @@ export default function RestaurantReviewCard(props) {
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
   const [isViewRestaurant, setIsViewRestaurant] = React.useState(false);
 
-
   const handleOpenMessageModal = () => {
     setOpenMessageModal(true);
   };
@@ -57,7 +56,11 @@ export default function RestaurantReviewCard(props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUpvotes_(upvotes_ + 1);
+        setUpvotes_(data.upvotes);
+        setDownvotes_(data.downvotes);
+      })
+      .catch((error) => {
+        console.error("Error during upvote:", error);
       });
   };
 
@@ -69,7 +72,13 @@ export default function RestaurantReviewCard(props) {
       },
     })
       .then((res) => res.json())
-      .then((data) => setDownvotes_(downvotes_ + 1));
+      .then((data) => {
+        setUpvotes_(data.upvotes);
+        setDownvotes_(data.downvotes);
+      })
+      .catch((error) => {
+        console.error("Error during downvote:", error);
+      });
   };
 
   return (

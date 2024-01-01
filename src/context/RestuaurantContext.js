@@ -40,7 +40,7 @@ export function RestaurantContextProvider({ children }) {
 const [placesData, setPlacesData] = useState(null);
 
 const fetchPlacesData = () => {
-  const apiKey = "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE";
+    const apiKey = "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE";
     const latitude = "37.7749";
     const longitude = "-122.4194";
 
@@ -62,10 +62,9 @@ const fetchPlacesData = () => {
 }
 
   return (
-    <RestaurantContext.Provider value={{ fetchRestaurant, restaurants }}>
+    <RestaurantContext.Provider value={{fetchPlacesData, fetchRestaurant, restaurants, placesData }}>
       {children}
     </RestaurantContext.Provider>
-
   );
 }
 
