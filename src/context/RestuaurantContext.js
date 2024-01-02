@@ -5,11 +5,9 @@ const RestaurantContext = createContext();
 export function RestaurantContextProvider({ children }) {
   const [user, setUser] = useState({});
 
-  
-
   const [restaurants, setRestaurants] = useState([]);
-  const fetchRestaurant = () => {
-    fetch("http://localhost:4000/restaurant/all")
+  const fetchRestaurant = (lat, lng) => {
+    fetch(`http://localhost:4000/restaurant/all/${lat}/${lng}`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -25,9 +23,6 @@ export function RestaurantContextProvider({ children }) {
           ).length;
           return {
             ...d,
-            upvotes,
-            downvotes,
-            supervotes,
           };
         });
 
@@ -37,9 +32,9 @@ export function RestaurantContextProvider({ children }) {
   };
 
 
-const [placesData, setPlacesData] = useState(null);
+  const [placesData, setPlacesData] = useState(null);
 
-const fetchPlacesData = () => {
+  const fetchPlacesData = () => {
     const apiKey = "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE";
     const latitude = "37.7749";
     const longitude = "-122.4194";
@@ -59,10 +54,10 @@ const fetchPlacesData = () => {
         console.log(data);
         setPlacesData(data);
       });
-}
+  }
 
   return (
-    <RestaurantContext.Provider value={{fetchPlacesData, fetchRestaurant, restaurants, placesData }}>
+    <RestaurantContext.Provider value={{ fetchPlacesData, fetchRestaurant, restaurants, placesData }}>
       {children}
     </RestaurantContext.Provider>
   );

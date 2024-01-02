@@ -153,17 +153,17 @@ app.post("/restaurant", async (req, res) => {
   }
 });
 
-app.get("/restaurant/all", async (req, res) => {
+app.get("/restaurant/all/:lat/:lng", async (req, res) => {
   try {
     const apiKey = "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE";
-    const latitude = "37.7749";
-    const longitude = "-122.4194";
+    const latitude = req.params.lat;
+    const longitude = req.params.lng;
     const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant&key=${apiKey}`;
 
     const response = await fetch(apiUrl);
     const fetchedRestaurants = await response.json();
 
-    const allRestaurantsVotes = await restaurantCollection.find({}).toArray(); 
+    const allRestaurantsVotes = await restaurantCollection.find({}).toArray();
 
     const restaurantsData = await Promise.all(fetchedRestaurants?.results?.map(async (data) => {
       const existingRestaurant = allRestaurantsVotes.find(
@@ -174,9 +174,9 @@ app.get("/restaurant/all", async (req, res) => {
         try {
           const result = await restaurantCollection.insertOne({
             reference: data.reference,
-            upvote: 0,
-            downvote: 0,
-            supervote: 0,
+            upvotes: 0,
+            downvotes: 0,
+            supervotes: 0,
           });
           console.log("New restaurant inserted:", result);
 

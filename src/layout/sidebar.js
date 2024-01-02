@@ -15,8 +15,8 @@ function Sidebar() {
   const { restaurants, fetchRestaurant, fetchPlacesData, placesData } = useRestaurant();
 
   useEffect(() => {
-    fetchRestaurant();
-    fetchPlacesData();
+    // fetchRestaurant();
+    // fetchPlacesData();
   }, []);
 
   const settings = {
@@ -27,6 +27,8 @@ function Sidebar() {
     slidesToScroll: 4.8,
     centerPadding: "50px",
   };
+
+  // console.log(restaurants)
 
   // const fetchRestaurant = () => {
   //   fetch("http://localhost:4000/restaurant/all")
@@ -59,17 +61,17 @@ function Sidebar() {
   //   fetchRestaurant();
   // }, []);
 
- 
- 
-  const onSSOUberEats = () => {
-    fetch(
-      "https://login.uber.com/oauth/v2/authorize?client_id=Aaytalvpv2KDaXJXZl4bN46_i33Bl4T7&response_type=code&redirect_uri=http://localhost:3000/home"
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
-  };
+
+
+  // const onSSOUberEats = () => {
+  //   fetch(
+  //     "https://login.uber.com/oauth/v2/authorize?client_id=Aaytalvpv2KDaXJXZl4bN46_i33Bl4T7&response_type=code&redirect_uri=http://localhost:3000/home"
+  //   )
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log(data);
+  //     });
+  // };
 
   return (
     <div className="sidebar">
@@ -78,21 +80,11 @@ function Sidebar() {
         label="Searach Restaurant"
         variant="outlined"
       /> */}
-      <button
-        onClick={() => {
-          onSSOUberEats();
-        }}
-      >
-        SSO Uber eats
-      </button>
-      <a href="https://login.uber.com/oauth/v2/authorize?client_id=Aaytalvpv2KDaXJXZl4bN46_i33Bl4T7&response_type=code&redirect_uri=http://localhost:3000/home">
-        SSO
-      </a>
       <div className="restaurant-container">
         <Slider {...settings}>
-          {restaurants.map((data, index) => (
+          {restaurants?.map((data, index) => (
             <div key={index}>
-              <RestaurantReviewCard {...data} />
+              <RestaurantReviewCard {...(data.voting || {})} {...(data.data || {})} />
             </div>
           ))}
         </Slider>

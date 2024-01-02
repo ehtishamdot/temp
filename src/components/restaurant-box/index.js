@@ -31,13 +31,16 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
+
 export default function RestaurantReviewCard(props) {
-  const { _id, title, upvotes, downvotes, description, image } = props;
+  const { reference, title, upvotes, downvotes, description, photos } = props;
   const [expanded, setExpanded] = React.useState(false);
   const [upvotes_, setUpvotes_] = React.useState(Number(upvotes));
   const [downvotes_, setDownvotes_] = React.useState(Number(downvotes));
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
   const [isViewRestaurant, setIsViewRestaurant] = React.useState(false);
+
+  // console.log(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photos[0]?.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`)
 
   const handleOpenMessageModal = () => {
     setOpenMessageModal(true);
@@ -99,7 +102,8 @@ export default function RestaurantReviewCard(props) {
       /> */}
       <ViewRestaurant />
       <MessageModal open={openMessageModal} setOpen={setOpenMessageModal} />
-      <CardMedia component="img" height="194" image={image} alt="Paella dish" />
+      {photos && <CardMedia component="img" height="194" image={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photos[0]?.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`} alt="Paella dish" />
+      }
       <CardContent
         sx={{ padding: "0", paddingLeft: "16px", paddingTop: "10px" }}
       >
@@ -125,7 +129,7 @@ export default function RestaurantReviewCard(props) {
           <Tooltip title="Up Vote">
             <IconButton
               onClick={() => {
-                onUpVoteHandler(_id);
+                onUpVoteHandler(reference);
               }}
               aria-label="add to favorites"
             >
@@ -144,7 +148,7 @@ export default function RestaurantReviewCard(props) {
           <Tooltip title="Down Vote">
             <IconButton
               onClick={() => {
-                onDownVoteHandler(_id);
+                onDownVoteHandler(reference);
               }}
               aria-label="add to favorites"
             >
