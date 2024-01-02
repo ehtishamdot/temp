@@ -240,6 +240,15 @@ const Map = () => {
     setCurrentPosition({ lat: latitude, lng: longitude });
   };
 
+  const onMapDragEnd = () => {
+    const newCenter = mapRef.current.getCenter();
+    setCurrentPosition({
+      lat: newCenter.lat(),
+      lng: newCenter.lng(),
+    });
+  };
+
+
   const errorCallback = (error) => {
     console.error("Error getting user location:", error);
   };
@@ -271,8 +280,6 @@ const Map = () => {
     return <div>Loading maps</div>;
   }
 
-
-
   return (
     <div>
       <GoogleMap
@@ -282,6 +289,7 @@ const Map = () => {
         // options={options}
         onClick={onMapClick}
         onLoad={onMapLoad}
+        onDragEnd={onMapDragEnd}
       >
         {superVotes.map((marker) => {
           return (
