@@ -33,7 +33,7 @@ const ExpandMore = styled((props) => {
 
 
 export default function RestaurantReviewCard(props) {
-  const { reference, title, upvotes, downvotes, description, photos } = props;
+  const { reference, title, upvotes, downvotes, description, photos, place_id: placeId } = props;
   const [expanded, setExpanded] = React.useState(false);
   const [upvotes_, setUpvotes_] = React.useState(Number(upvotes));
   const [downvotes_, setDownvotes_] = React.useState(Number(downvotes));
@@ -100,7 +100,7 @@ export default function RestaurantReviewCard(props) {
         title="Shrimp and Chorizo Paella"
         subheader="September 14, 2016"
       /> */}
-      <ViewRestaurant />
+      <ViewRestaurant placeId={placeId} />
       <MessageModal open={openMessageModal} setOpen={setOpenMessageModal} />
       {photos && <CardMedia component="img" height="194" image={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photos[0]?.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`} alt="Paella dish" />
       }
