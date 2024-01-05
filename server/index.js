@@ -152,44 +152,62 @@ app.post("/restaurant", async (req, res) => {
     res.status(500).send(err);
   }
 });
-
+// Define a route for retrieving restaurant information based on latitude and longitude
 app.get("/restaurant/all/:lat/:lng", async (req, res) => {
   try {
+    // Google Maps API Key for authentication
     const apiKey = "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE";
+
+    // Extract latitude and longitude from request parameters
     const latitude = req.params.lat;
     const longitude = req.params.lng;
+
+    // Construct the Google Places API URL for nearby restaurants
     const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant&key=${apiKey}`;
 
+    // Fetch restaurant data from the Google Places API
     const response = await fetch(apiUrl);
     const fetchedRestaurants = await response.json();
 
+    // Retrieve all existing restaurant votes from the database
     const allRestaurantsVotes = await restaurantCollection.find({}).toArray();
 
+    // Process each fetched restaurant, insert new ones into the database, and prepare response data
     const restaurantsData = await Promise.all(fetchedRestaurants?.results?.map(async (data) => {
+      // Check if the restaurant already exists in the database based on reference
       const existingRestaurant = allRestaurantsVotes.find(
         (v) => data.reference === v.reference
       );
 
+      // If the restaurant doesn't exist, insert a new record into the database
       if (!existingRestaurant) {
         try {
+          // Insert a new restaurant record with initial vote counts
           const result = await restaurantCollection.insertOne({
             reference: data.reference,
             upvotes: 0,
             downvotes: 0,
             supervotes: 0,
           });
+
+          // Log the successful insertion
           console.log("New restaurant inserted:", result);
 
+          // Retrieve the newly inserted restaurant data from the database
           const newRes = await restaurantCollection.findOne(({
             _id: result.insertedId,
-          }))
+          }));
 
+          // Return an object containing both voting information and the original restaurant data
           return {
             voting: newRes,
             data,
           };
         } catch (err) {
+          // Log and handle errors during the insertion process
           console.error("Error inserting new restaurant:", err);
+
+          // Return an object with null voting information and the original restaurant data
           return {
             voting: null,
             data,
@@ -197,19 +215,22 @@ app.get("/restaurant/all/:lat/:lng", async (req, res) => {
         }
       }
 
+      // If the restaurant already exists, return an object with voting information and the original restaurant data
       return {
         voting: existingRestaurant,
         data,
       };
     }));
 
-    // Send the response
+    // Send the response containing information about each restaurant and its voting status
     res.json(restaurantsData);
 
   } catch (err) {
+    // Log and handle errors that occur during the entire process
     console.log(err);
   }
 });
+
 
 app.put("/upvote/:id/:email", async (req, res) => {
   const id = req.params.id;
