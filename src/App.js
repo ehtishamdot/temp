@@ -46,7 +46,7 @@ function App() {
                       background: "#fff",
                       position: "absolute",
                       top: "4%",
-                      zIndex: "100000",
+                      zIndex: "10",
                       backgroundColor: "white",
                       left: "50%",
                       transform: "translate(-50%, -50%)",
