@@ -35,8 +35,8 @@ const ExpandMore = styled((props) => {
 export default function RestaurantReviewCard(props) {
   const { reference, title, upvotes, downvotes, description, photos, place_id: placeId } = props;
   const [expanded, setExpanded] = React.useState(false);
-  const [upvotes_, setUpvotes_] = React.useState(Number(upvotes));
-  const [downvotes_, setDownvotes_] = React.useState(Number(downvotes));
+  const [upvotes_, setUpvotes_] = React.useState(upvotes);
+  const [downvotes_, setDownvotes_] = React.useState(downvotes);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
   const [isViewRestaurant, setIsViewRestaurant] = React.useState(false);
 
@@ -59,8 +59,8 @@ export default function RestaurantReviewCard(props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUpvotes_(data.upvotes);
-        setDownvotes_(data.downvotes);
+        setUpvotes_(data.data.upvotes);
+        setDownvotes_(data.data.downvotes);
       })
       .catch((error) => {
         console.error("Error during upvote:", error);
@@ -76,8 +76,8 @@ export default function RestaurantReviewCard(props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUpvotes_(data.upvotes);
-        setDownvotes_(data.downvotes);
+        setUpvotes_(data.data.upvotes);
+        setDownvotes_(data.data.downvotes);
       })
       .catch((error) => {
         console.error("Error during downvote:", error);
@@ -136,7 +136,7 @@ export default function RestaurantReviewCard(props) {
               <FavoriteIcon />
             </IconButton>
           </Tooltip>
-          <span style={{ paddingRight: "10px" }}>{upvotes_}</span>
+          <span style={{ paddingRight: "10px" }}>{upvotes_?.length}</span>
           <span
             style={{
               height: "22px",
@@ -155,7 +155,7 @@ export default function RestaurantReviewCard(props) {
               <HeartBrokenIcon />
             </IconButton>
           </Tooltip>
-          <span style={{ paddingRight: "10px" }}>{downvotes_}</span>
+          <span style={{ paddingRight: "10px" }}>{downvotes_?.length}</span>
         </div>
         <IconButton aria-label="share">
           <ShareIcon />

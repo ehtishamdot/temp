@@ -206,7 +206,9 @@ const options = {
   zoomControl: true,
   disableDefaultUI: true,
 };
-const Map = () => {
+
+const Map = () => 
+{
   const { fetchRestaurant } = useRestaurant();
 
   const { isLoaded, loadError } = useLoadScript({

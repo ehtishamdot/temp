@@ -185,9 +185,9 @@ app.get("/restaurant/all/:lat/:lng", async (req, res) => {
           // Insert a new restaurant record with initial vote counts
           const result = await restaurantCollection.insertOne({
             reference: data.reference,
-            upvotes: 0,
-            downvotes: 0,
-            supervotes: 0,
+            upvotes: [],
+            downvotes: [],
+            supervotes: [],
           });
 
           // Log the successful insertion
@@ -235,128 +235,101 @@ app.get("/restaurant/all/:lat/:lng", async (req, res) => {
 app.put("/upvote/:id/:email", async (req, res) => {
   const id = req.params.id;
   const email = req.params.email;
+
   try {
-    const restaurant = await restaurantCollection.findOne({
-      _id: new ObjectId(id),
-    });
+    // Find the restaurant document
+    const restaurant = await restaurantCollection.findOne({ reference: id });
 
-    const isAlreadyVotedUp = restaurant.votes.find(
-      (d) => d.email === email && d.votetype === "upvote"
-    );
-
-    const isAlreadyVotedDown = restaurant.votes.find(
-      (d) => d.email === email && d.votetype === "downvote"
-    );
-
-    if (isAlreadyVotedUp) {
-      res.status(500).send("User has already upvoted");
-      return;
+    if (!restaurant) {
+      // If the restaurant with the given reference ID is not found, return an error response
+      return res.status(404).json({ error: "Restaurant not found." });
     }
 
-    let modifiedRestaurantVotes;
-    let result;
-
-    if (isAlreadyVotedDown) {
-      // Remove the downvote
-      modifiedRestaurantVotes = restaurant.votes.filter(
-        (d) => !(d.email === email && d.votetype === "downvote")
+    // Check if the email exists in the downvotes array
+    if (restaurant.downvotes.includes(email)) {
+      // Remove the email from the downvotes array
+      await restaurantCollection.updateOne(
+        { reference: id },
+        { $pull: { downvotes: email } }
       );
+
+      // Push the email into the upvotes array
+      await restaurantCollection.updateOne(
+        { reference: id },
+        { $push: { upvotes: email } }
+      );
+
     } else {
-      // If not downvoted, keep the existing votes
-      modifiedRestaurantVotes = restaurant.votes;
+      // If the email is not in the downvotes array, return an error response
+      // Push the email into the upvotes array
+      await restaurantCollection.updateOne(
+        { reference: id },
+        { $push: { upvotes: email } }
+      );
+
     }
 
-    // Add the upvote
-    modifiedRestaurantVotes.push({
-      email,
-      votetype: "upvote",
-    });
+    const newRes = await restaurantCollection.findOne(({
+      reference: id,
+    }));
 
-    result = await restaurantCollection.updateOne(
-      {
-        _id: new ObjectId(id),
-      },
-      {
-        $set: {
-          votes: modifiedRestaurantVotes,
-        },
-      }
-    );
-
-    const updatedRestaurant = await restaurantCollection.findOne({
-      _id: new ObjectId(id),
-    });
-    const updatedUpvotes = updatedRestaurant.votes.filter(
-      (vote) => vote.votetype === "upvote"
-    ).length;
-    const updatedDownvotes = updatedRestaurant.votes.filter(
-      (vote) => vote.votetype === "downvote"
-    ).length;
-
-    res.json({ result, upvotes: updatedUpvotes, downvotes: updatedDownvotes });
-
-    res.json(result);
+    res.json({ success: true, message: "upvoted", data: newRes });
   } catch (err) {
+    console.log(err);
     res.status(500).send(err);
   }
 });
+
 
 app.put("/downvote/:id/:email", async (req, res) => {
   const id = req.params.id;
   const email = req.params.email;
+
   try {
-    const restaurant = await restaurantCollection.findOne({
-      _id: new ObjectId(id),
-    });
+    // Find the restaurant document
+    const restaurant = await restaurantCollection.findOne({ reference: id });
 
-    const isAlreadyVotedUp = restaurant.votes.find(
-      (d) => d.email === email && d.votetype === "upvote"
-    );
-
-    const isAlreadyVotedDown = restaurant.votes.find(
-      (d) => d.email === email && d.votetype === "downvote"
-    );
-
-    if (isAlreadyVotedDown) {
-      res.status(500).send("User has already downvoted");
-      return;
+    if (!restaurant) {
+      // If the restaurant with the given reference ID is not found, return an error response
+      return res.status(404).json({ error: "Restaurant not found." });
     }
 
-    let modifiedRestaurantVotes;
-    let result;
-
-    if (isAlreadyVotedUp) {
-      // Remove the upvote
-      modifiedRestaurantVotes = restaurant.votes.filter(
-        (d) => !(d.email === email && d.votetype === "upvote")
+    // Check if the email exists in the downvotes array
+    if (restaurant.upvotes.includes(email)) {
+      // Remove the email from the downvotes array
+      let result = await restaurantCollection.updateOne(
+        { reference: id },
+        { $pull: { upvotes: email } }
       );
+
+      // Push the email into the upvotes array
+      result = await restaurantCollection.updateOne(
+        { reference: id },
+        { $push: { downvotes: email } }
+      );
+
     } else {
-      // If not upvoted, keep the existing votes
-      modifiedRestaurantVotes = restaurant.votes;
+      // If the email is not in the downvotes array, return an error response
+      // Push the email into the upvotes array
+      let result = await restaurantCollection.updateOne(
+        { reference: id },
+        { $push: { downvotes: email } }
+      );
     }
 
-    // Add the downvote
-    modifiedRestaurantVotes.push({
-      email,
-      votetype: "downvote",
-    });
+    const newRes = await restaurantCollection.findOne(({
+      reference: id,
+    }));
 
-    result = await restaurantCollection.updateOne(
-      {
-        _id: new ObjectId(id),
-      },
-      {
-        $set: {
-          votes: modifiedRestaurantVotes,
-        },
-      }
-    );
+    res.json({ success: true, message: "downvoted", data: newRes });
 
-    res.json(result);
   } catch (err) {
+    console.log(err);
     res.status(500).send(err);
   }
 });
+
+
 
 app.put("/supervote/:id/:email", async (req, res) => {
   const id = req.params.id;
