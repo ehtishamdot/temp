@@ -17,11 +17,10 @@ import {
   RestaurantContextProvider,
   useRestaurant,
 } from "./context/RestuaurantContext";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 // UP VOTE AND DOWN VOTE
 function App() {
-
 
   useEffect(() => {
     // data.fetchRestaurant();
@@ -54,7 +53,7 @@ function App() {
                   >
                     <RestaurantSearchInput />
                   </div>
-                  <Map />
+                  <Map/>
                   <Sidebar />
                 </ProtectedRoute>
               }

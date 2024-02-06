@@ -19,6 +19,10 @@ import { Tooltip } from "@mui/material";
 import LocalFireDepartmentTwoToneIcon from "@mui/icons-material/LocalFireDepartmentTwoTone";
 import MessageModal from "../message-modal";
 import ViewRestaurant from "../drawer";
+import { SnackbarProvider, enqueueSnackbar } from 'notistack'
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+// import toast, { Toaster } from "react-hot-toast";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -31,17 +35,47 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-
 export default function RestaurantReviewCard(props) {
-  const { reference, title, upvotes, downvotes, description, photos, place_id: placeId } = props;
+  const {
+    reference,
+    title,
+    upvotes,
+    downvotes,
+    description,
+    photos,
+    place_id: placeId,
+    geometry,
+    // currentLocation,
+  } = props;
+
   const [expanded, setExpanded] = React.useState(false);
   const [upvotes_, setUpvotes_] = React.useState(upvotes);
   const [downvotes_, setDownvotes_] = React.useState(downvotes);
   const [openMessageModal, setOpenMessageModal] = React.useState(false);
   const [isViewRestaurant, setIsViewRestaurant] = React.useState(false);
+  const [currentLocation, setCurrentLocation] = React.useState();
+
+  React.useEffect(() => {
+    // Check if Geolocation is supported by the browser
+    if (navigator.geolocation) {
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCurrentLocation({ lat: latitude, lng: longitude });
+        },
+        (error) => {
+          console.error('Error getting current location:', error.message);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by your browser');
+    }
+  }, []);
 
   // console.log(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photos[0]?.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`)
 
+  // console.log("geometry",geometry);
   const handleOpenMessageModal = () => {
     setOpenMessageModal(true);
   };
@@ -50,7 +84,42 @@ export default function RestaurantReviewCard(props) {
     setExpanded(!expanded);
   };
 
+  const isWithin1000Meters = (source, destination) => {
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+      const R = 6371; // Radius of the Earth in kilometers
+      const dLat = (lat2 - lat1) * (Math.PI / 180);
+      const dLon = (lon2 - lon1) * (Math.PI / 180);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) *
+          Math.cos(lat2 * (Math.PI / 180)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c * 1000; // Distance in meters
+      console.log(distance);
+      return distance;
+    };
+  
+    const { lat: lat1, lng: lon1 } = source;
+    const { lat: lat2, lng: lon2 } = destination;
+  
+    const distance = calculateDistance(lat1, lon1, lat2, lon2);
+  
+    return distance < 1000;
+  };  
+
   const onUpVoteHandler = (id) => {
+    const status = isWithin1000Meters(currentLocation,geometry.location);
+    console.log(status);
+    if(!status) {
+      console.log("Unable to Like")
+      enqueueSnackbar('This is out of the current radius!', { 
+        variant: 'error'
+      })
+        return;
+    }
+
     fetch(`http://localhost:4000/upvote/${id}/imasud7865@gmail.com`, {
       method: "PUT",
       headers: {
@@ -68,6 +137,15 @@ export default function RestaurantReviewCard(props) {
   };
 
   const onDownVoteHandler = (id) => {
+    const status = isWithin1000Meters(currentLocation,geometry.location);
+    if(!status) {
+      enqueueSnackbar('This is out of the current radius', { 
+        variant: 'error'
+      })
+
+      console.log("Hello")
+      return;
+    }
     fetch(`http://localhost:4000/downvote/${id}/imasud7865@gmail.com`, {
       method: "PUT",
       headers: {
@@ -85,7 +163,8 @@ export default function RestaurantReviewCard(props) {
   };
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345, position:"relative" }}>
+      {/* <SnackbarProvider /> */}
       {/* <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -102,8 +181,14 @@ export default function RestaurantReviewCard(props) {
       /> */}
       <ViewRestaurant placeId={placeId} />
       <MessageModal open={openMessageModal} setOpen={setOpenMessageModal} />
-      {photos && <CardMedia component="img" height="194" image={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photos[0]?.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`} alt="Paella dish" />
-      }
+      {photos && (
+        <CardMedia
+          component="img"
+          height="194"
+          image={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photos[0]?.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`}
+          alt="Paella dish"
+        />
+      )}
       <CardContent
         sx={{ padding: "0", paddingLeft: "16px", paddingTop: "10px" }}
       >

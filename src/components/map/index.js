@@ -25,6 +25,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useRestaurant } from "../../context/RestuaurantContext";
 
 const libraries = ["places"];
+
 const mapContainerStyle = {
   width: "100%",
   height: "68vh",
@@ -207,8 +208,7 @@ const options = {
   disableDefaultUI: true,
 };
 
-const Map = () => 
-{
+const Map = (props) => {
   const { fetchRestaurant } = useRestaurant();
 
   const { isLoaded, loadError } = useLoadScript({
@@ -231,11 +231,12 @@ const Map = () =>
       },
     ]);
   }, []);
+
   console.log(selected);
 
   React.useEffect(() => {
-    fetchRestaurant(currentPosition?.lat, currentPosition?.lng)
-  }, [currentPosition])
+    fetchRestaurant(currentPosition?.lat, currentPosition?.lng);
+  }, [currentPosition]);
 
   const successCallback = (position) => {
     const { latitude, longitude } = position.coords;
@@ -249,7 +250,6 @@ const Map = () =>
       lng: newCenter.lng(),
     });
   };
-
 
   const errorCallback = (error) => {
     console.error("Error getting user location:", error);
@@ -301,9 +301,9 @@ const Map = () =>
               onClick={() => {
                 setSelected(marker);
               }}
-            // icon={{
-            //   url: "/supervotes.svg"
-            // }}
+              // icon={{
+              //   url: "/supervotes.svg"
+              // }}
             />
           );
         })}
@@ -381,7 +381,7 @@ function Search({ panTo, fetchRestaurant }) {
       const results = await getGeocode({ address });
       const { lat, lng } = await getLatLng(results[0]);
       panTo({ lat, lng });
-      fetchRestaurant(lat, lng)
+      fetchRestaurant(lat, lng);
     } catch (error) {
       console.log("Error: ", error);
     }

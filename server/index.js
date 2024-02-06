@@ -152,6 +152,7 @@ app.post("/restaurant", async (req, res) => {
     res.status(500).send(err);
   }
 });
+
 // Define a route for retrieving restaurant information based on latitude and longitude
 app.get("/restaurant/all/:lat/:lng", async (req, res) => {
   try {
@@ -163,7 +164,7 @@ app.get("/restaurant/all/:lat/:lng", async (req, res) => {
     const longitude = req.params.lng;
 
     // Construct the Google Places API URL for nearby restaurants
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant&key=${apiKey}`;
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=1000&type=restaurant&key=${apiKey}`;
 
     // Fetch restaurant data from the Google Places API
     const response = await fetch(apiUrl);
