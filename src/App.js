@@ -51,7 +51,7 @@ function App() {
                       transform: "translate(-50%, -50%)",
                     }}
                   >
-                    <RestaurantSearchInput />
+                    {/* <RestaurantSearchInput /> */}
                   </div>
                   <Map/>
                   <Sidebar />

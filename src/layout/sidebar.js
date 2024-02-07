@@ -74,7 +74,7 @@ function Sidebar(props) {
   // };
 
   return (
-    <div className="sidebar">
+    <div className="sidebar" style={{marginBottom:"3rem"}}>
       {/* <TextField
         id="outlined-basic"
         label="Searach Restaurant"

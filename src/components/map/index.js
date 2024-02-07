@@ -28,7 +28,7 @@ const libraries = ["places"];
 
 const mapContainerStyle = {
   width: "100%",
-  height: "68vh",
+  height: "55vh",
 };
 
 const mapStyles = [
@@ -203,9 +203,8 @@ const mapStyles = [
 ];
 
 const options = {
-  styles: mapStyles,
-  zoomControl: true,
-  disableDefaultUI: true,
+  zoomControl: false,
+  google:null
 };
 
 const Map = (props) => {
@@ -288,7 +287,7 @@ const Map = (props) => {
         mapContainerStyle={mapContainerStyle}
         zoom={currentPosition ? 18 : 6}
         center={currentPosition || { lat: 55.3781, lng: -3.436 }}
-        // options={options}
+        options={options}
         onClick={onMapClick}
         onLoad={onMapLoad}
         onDragEnd={onMapDragEnd}
@@ -323,9 +322,10 @@ const Map = (props) => {
           </InfoWindow>
         ) : null}
       </GoogleMap>
-
+      <div style={{display:"flex", justifyContent:"center", alignItems:"center",gap:"1rem", margin:"2rem 0 1rem"}}>
       <Search panTo={panTo} fetchRestaurant={fetchRestaurant} />
       <Locate panTo={panTo} />
+      </div>
     </div>
   );
 };
@@ -395,6 +395,12 @@ function Search({ panTo, fetchRestaurant }) {
           onChange={handleInput}
           disabled={!ready}
           placeholder="Search your restaurant"
+          style={{
+            minWidth: "500px",
+            border: "2px solid #222",
+            padding: "5px 8px",
+            borderRadius: ".2rem",
+          }}
         />
         <ComboboxPopover>
           <ComboboxList>

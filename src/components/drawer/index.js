@@ -19,6 +19,7 @@ import axios from 'axios';
 import { IconButton, Tooltip, Typography, styled } from '@mui/material';
 import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { Details } from '@mui/icons-material';
 
 // Functional component ViewRestaurant takes a placeId as a prop
 export default function ViewRestaurant({ placeId }) {
@@ -29,7 +30,7 @@ export default function ViewRestaurant({ placeId }) {
     bottom: false,
     right: false,
   });
-
+  
   // State to store details of the restaurant fetched from Google Maps API
   const [details, setDetails] = React.useState(null);
 
@@ -57,8 +58,9 @@ export default function ViewRestaurant({ placeId }) {
         });
     
         const data = response.data;
-        console.log(data);
+        console.log("data",data);
         setDetails(data?.result);
+
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -339,7 +341,7 @@ export default function ViewRestaurant({ placeId }) {
     <div>
       {/* Iterate over the specified anchor positions (only 'right' in this case) */}
       {['right'].map((anchor) => (
-        <React.Fragment key={anchor}>
+        <React.Fragment key={anchor} >
           {/* Button to open the drawer */}
           <Button onClick={toggleDrawer(anchor, true, placeId)}>View Restaurant</Button>
           {/* Drawer component */}
