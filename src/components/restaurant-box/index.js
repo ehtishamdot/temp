@@ -135,6 +135,9 @@ export default function RestaurantReviewCard(props) {
       })
       .catch((error) => {
         console.error("Error during upvote:", error);
+        enqueueSnackbar("You have already upvoted", {
+          variant: "error",
+        });
       });
   };
 
@@ -160,6 +163,9 @@ export default function RestaurantReviewCard(props) {
       })
       .catch((error) => {
         console.error("Error during downvote:", error);
+        enqueueSnackbar("You have already downvoted.", {
+          variant: "error",
+        });
       });
   };
 

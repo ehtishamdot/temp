@@ -174,64 +174,64 @@ app.get("/restaurant/all/:lat/:lng", async (req, res) => {
     const allRestaurantsVotes = await restaurantCollection.find({}).toArray();
 
     // Process each fetched restaurant, insert new ones into the database, and prepare response data
-    const restaurantsData = await Promise.all(fetchedRestaurants?.results?.map(async (data) => {
-      // Check if the restaurant already exists in the database based on reference
-      const existingRestaurant = allRestaurantsVotes.find(
-        (v) => data.reference === v.reference
-      );
+    const restaurantsData = await Promise.all(
+      fetchedRestaurants?.results?.map(async (data) => {
+        // Check if the restaurant already exists in the database based on reference
+        const existingRestaurant = allRestaurantsVotes.find(
+          (v) => data.reference === v.reference
+        );
 
-      // If the restaurant doesn't exist, insert a new record into the database
-      if (!existingRestaurant) {
-        try {
-          // Insert a new restaurant record with initial vote counts
-          const result = await restaurantCollection.insertOne({
-            reference: data.reference,
-            upvotes: [],
-            downvotes: [],
-            supervotes: [],
-          });
+        // If the restaurant doesn't exist, insert a new record into the database
+        if (!existingRestaurant) {
+          try {
+            // Insert a new restaurant record with initial vote counts
+            const result = await restaurantCollection.insertOne({
+              reference: data.reference,
+              upvotes: [],
+              downvotes: [],
+              supervotes: [],
+            });
 
-          // Log the successful insertion
-          console.log("New restaurant inserted:", result);
+            // Log the successful insertion
+            console.log("New restaurant inserted:", result);
 
-          // Retrieve the newly inserted restaurant data from the database
-          const newRes = await restaurantCollection.findOne(({
-            _id: result.insertedId,
-          }));
+            // Retrieve the newly inserted restaurant data from the database
+            const newRes = await restaurantCollection.findOne({
+              _id: result.insertedId,
+            });
 
-          // Return an object containing both voting information and the original restaurant data
-          return {
-            voting: newRes,
-            data,
-          };
-        } catch (err) {
-          // Log and handle errors during the insertion process
-          console.error("Error inserting new restaurant:", err);
+            // Return an object containing both voting information and the original restaurant data
+            return {
+              voting: newRes,
+              data,
+            };
+          } catch (err) {
+            // Log and handle errors during the insertion process
+            console.error("Error inserting new restaurant:", err);
 
-          // Return an object with null voting information and the original restaurant data
-          return {
-            voting: null,
-            data,
-          };
+            // Return an object with null voting information and the original restaurant data
+            return {
+              voting: null,
+              data,
+            };
+          }
         }
-      }
 
-      // If the restaurant already exists, return an object with voting information and the original restaurant data
-      return {
-        voting: existingRestaurant,
-        data,
-      };
-    }));
+        // If the restaurant already exists, return an object with voting information and the original restaurant data
+        return {
+          voting: existingRestaurant,
+          data,
+        };
+      })
+    );
 
     // Send the response containing information about each restaurant and its voting status
     res.json(restaurantsData);
-
   } catch (err) {
     // Log and handle errors that occur during the entire process
     console.log(err);
   }
 });
-
 
 app.put("/upvote/:id/:email", async (req, res) => {
   const id = req.params.id;
@@ -244,6 +244,16 @@ app.put("/upvote/:id/:email", async (req, res) => {
     if (!restaurant) {
       // If the restaurant with the given reference ID is not found, return an error response
       return res.status(404).json({ error: "Restaurant not found." });
+    }
+
+    console.log("restaurant", restaurant);
+    console.log("Upvotes:", restaurant?.upvotes);
+    console.log("Downvotes:", restaurant?.downvotes);
+
+    if (
+      restaurant?.upvotes?.includes(email)
+    ) {
+      return res.status(404).json({ error: "You have already voted." });
     }
 
     // Check if the email exists in the downvotes array
@@ -259,7 +269,6 @@ app.put("/upvote/:id/:email", async (req, res) => {
         { reference: id },
         { $push: { upvotes: email } }
       );
-
     } else {
       // If the email is not in the downvotes array, return an error response
       // Push the email into the upvotes array
@@ -267,12 +276,11 @@ app.put("/upvote/:id/:email", async (req, res) => {
         { reference: id },
         { $push: { upvotes: email } }
       );
-
     }
 
-    const newRes = await restaurantCollection.findOne(({
+    const newRes = await restaurantCollection.findOne({
       reference: id,
-    }));
+    });
 
     res.json({ success: true, message: "upvoted", data: newRes });
   } catch (err) {
@@ -280,7 +288,6 @@ app.put("/upvote/:id/:email", async (req, res) => {
     res.status(500).send(err);
   }
 });
-
 
 app.put("/downvote/:id/:email", async (req, res) => {
   const id = req.params.id;
@@ -293,6 +300,12 @@ app.put("/downvote/:id/:email", async (req, res) => {
     if (!restaurant) {
       // If the restaurant with the given reference ID is not found, return an error response
       return res.status(404).json({ error: "Restaurant not found." });
+    }
+
+    if (
+      restaurant?.downvotes?.includes(email)
+    ) {
+      return res.status(404).json({ error: "You have already voted." });
     }
 
     // Check if the email exists in the downvotes array
@@ -308,7 +321,6 @@ app.put("/downvote/:id/:email", async (req, res) => {
         { reference: id },
         { $push: { downvotes: email } }
       );
-
     } else {
       // If the email is not in the downvotes array, return an error response
       // Push the email into the upvotes array
@@ -318,19 +330,16 @@ app.put("/downvote/:id/:email", async (req, res) => {
       );
     }
 
-    const newRes = await restaurantCollection.findOne(({
+    const newRes = await restaurantCollection.findOne({
       reference: id,
-    }));
+    });
 
     res.json({ success: true, message: "downvoted", data: newRes });
-
   } catch (err) {
     console.log(err);
     res.status(500).send(err);
   }
 });
-
-
 
 app.put("/supervote/:id/:email", async (req, res) => {
   const id = req.params.id;

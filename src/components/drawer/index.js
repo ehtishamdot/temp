@@ -1,25 +1,25 @@
 // Import necessary components and icons from Material-UI
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
-import axios from 'axios';
-import { IconButton, Tooltip, Typography, styled } from '@mui/material';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import Button from "@mui/material/Button";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import axios from "axios";
+import { IconButton, Tooltip, Typography, styled } from "@mui/material";
 import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { Details } from '@mui/icons-material';
+import { Details } from "@mui/icons-material";
 
 // Functional component ViewRestaurant takes a placeId as a prop
 export default function ViewRestaurant({ placeId }) {
@@ -30,12 +30,12 @@ export default function ViewRestaurant({ placeId }) {
     bottom: false,
     right: false,
   });
-  
+
   // State to store details of the restaurant fetched from Google Maps API
   const [details, setDetails] = React.useState(null);
 
   // State to manage the currently selected tab value (gallery, reviews, menu)
-  const [value, setValue] = React.useState('gallery');
+  const [value, setValue] = React.useState("gallery");
 
   // Handle tab change
   const handleChange = (event, newValue) => {
@@ -44,25 +44,30 @@ export default function ViewRestaurant({ placeId }) {
 
   // Function to toggle the drawer's visibility
   const toggleDrawer = (anchor, open, placeId) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
       return;
     }
 
     const fetchData = async (placeId) => {
       try {
-        const response = await axios.get(`https://maps.googleapis.com/maps/api/place/details/json`, {
-          params: {
-            place_id: placeId,
-            key: 'AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE',
-          },
-        });
-    
-        const data = response.data;
-        console.log("data",data);
-        setDetails(data?.result);
+        const response = await axios.get(
+          `https://maps.googleapis.com/maps/api/place/details/json`,
+          {
+            params: {
+              place_id: placeId,
+              key: "AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE",
+            },
+          }
+        );
 
+        const data = response.data;
+        console.log("data", data);
+        setDetails(data?.result);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
     fetchData(placeId);
@@ -80,46 +85,54 @@ export default function ViewRestaurant({ placeId }) {
 
   const MenuItem = styled(Box)({
     display: "flex",
-    padding: "10px",
+    border: "1px solid #aaa",
+    borderRadius: "1rem",
+    flexDirection: "row-reverse",
+    padding: "1rem 10px",
+    margin: "1rem 0",
     ".imageWrapper": {
-      width:"200px"
+      width: "200px",
     },
     ".menuContent": {
       flexGrow: "1",
       display: "flex",
       justifyContent: "space-between",
       flexDirection: "column",
-      padding: "2rem 0",
 
       ".menuHeading": {
         color: "rgb(33, 37, 41)",
         fontSize: "28px",
-        fontWeight: '600'
+        fontWeight: "600",
       },
       ".menuDescription": {
         color: "rgb(113, 128, 150)",
         fontSize: "18px",
-        fontWeight: '400'
+        fontWeight: "400",
       },
       ".pricing": {
         backgroundColor: "#000",
         color: "white",
-        display:"inline",
+        display: "inline",
         padding: "0 5px",
-        "span": {
-          textDecoration:"line-through"
-        }
-      }
+        span: {
+          textDecoration: "line-through",
+        },
+      },
     },
   });
   // JSX for the content of the drawer
   const list = (anchor) => (
     <Box
-      sx={{ width: anchor === 'top' || anchor === 'bottom' ? 575 : 575, padding: "30px 16px 0" }}
+      sx={{
+        width: anchor === "top" || anchor === "bottom" ? 575 : 575,
+        padding: "30px 16px 0",
+      }}
       role="presentation"
     >
-      <Box sx={{position:"absolute", right: "10px", top: "10px"}}>
-       <Button onClick={toggleDrawer(anchor, false)}><img src='/Images/close-btn.jpg' width="40px"/></Button>
+      <Box sx={{ position: "absolute", right: "10px", top: "10px" }}>
+        <Button onClick={toggleDrawer(anchor, false)}>
+          <img src="/Images/close-btn.jpg" width="40px" />
+        </Button>
       </Box>
       {details && (
         <div>
@@ -144,191 +157,253 @@ export default function ViewRestaurant({ placeId }) {
           {/* Conditional rendering based on the selected tab */}
           {value === "gallery" && (
             <Box>
-              <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+              <ImageList
+                sx={{ width: 500, height: 450 }}
+                cols={3}
+                rowHeight={164}
+              >
                 {/* Display restaurant gallery using Google Maps photo API */}
-                {details.photos && details.photos.map((photo, index) => (
-                  <ImageListItem key={photo.photo_reference}>
-                    <img
-                      srcSet={`${`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                      src={`${`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`}`}
-                      alt={`Gallery ${index}`}
-                      loading="lazy"
-                    />
-                  </ImageListItem>
-                ))}
+                {details.photos &&
+                  details.photos.map((photo, index) => (
+                    <ImageListItem key={photo.photo_reference}>
+                      <img
+                        srcSet={`${`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                        src={`${`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=AIzaSyBbd6OxsOu0GJoN0PaGJlcfAfCnr9junkE`}`}
+                        alt={`Gallery ${index}`}
+                        loading="lazy"
+                      />
+                    </ImageListItem>
+                  ))}
               </ImageList>
             </Box>
           )}
 
           {value === "reviews" && (
-            <Box sx={{marginTop: "1rem"}}>
+            <Box sx={{ marginTop: "1rem" }}>
               {/* Display restaurant reviews */}
-              {details.reviews && details.reviews.map((review, index) => (
-                <div key={index}>
-                  <h3>{review.author_name}</h3>
-                  <p>{review.text}</p>
-                </div>
-              ))}
+              {details.reviews &&
+                details.reviews.map((review, index) => (
+                  <div key={index}>
+                    <h3>{review.author_name}</h3>
+                    <p>{review.text}</p>
+                  </div>
+                ))}
             </Box>
           )}
 
           {value === "menu" && (
             <>
-            <Box>
-            <MenuItem>
-              <Box className="imageWrapper">
-                <img src='/Images/burger1.webp' width="100%" alt='burgerImage'/>
+              <Box>
+                <MenuItem>
+                  <Box className="imageWrapper">
+                    <img
+                      src="/Images/food1.jpeg"
+                      alt="burgerImage"
+                      width="200px"
+                      height="200px"
+                      style={{ objectFit: "cover", objectPosition: "center" }}
+                    />
+                  </Box>
+                  <Box className="menuContent">
+                    <Box>
+                      <Typography className="menuHeading">
+                        Baba Ghanoush Meze
+                      </Typography>
+                      <Typography className="menuDescription">
+                        Eggplant blended with lemon juice, tahini and salt.
+                        Served with lebanese bread.
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "between",
+                        gap: "1rem",
+                      }}
+                    >
+                      <Typography className="pricing">
+                        <span>£. 15.00</span> £. 12.99
+                      </Typography>
+                      {/* <Box sx={{display:"flex",justifyContent:"center",gap:"8px",alignItems:"center"}}><Button sx={{transform:"scaleY(-1)"}}><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography><Button><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography></Box> */}
+                      <div
+                        style={{
+                          backgroundColor: "#f1f1f1",
+                          borderRadius: "10px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Tooltip title="Up Vote">
+                          <IconButton
+                            // onClick={() => {
+                            //   onUpVoteHandler(reference);
+                            // }}
+                            aria-label="add to favorites"
+                          >
+                            <FavoriteIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <span style={{ paddingRight: "10px" }}>0</span>
+                        <span
+                          style={{
+                            height: "22px",
+                            background: "rgb(207 202 202)",
+                            width: "2px",
+                            display: "inline-block",
+                          }}
+                        ></span>
+                        <Tooltip title="Down Vote">
+                          <IconButton>
+                            <HeartBrokenIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <span style={{ paddingRight: "10px" }}>0</span>
+                      </div>
+                    </Box>
+                  </Box>
+                </MenuItem>
               </Box>
-              <Box className="menuContent">
-                <Box>
-                <Typography className='menuHeading'>Wow Winter Deal 1</Typography>
-                <Typography className='menuDescription'>1 Firebird burger with 1 soft drink</Typography>
+              <MenuItem>
+                <Box className="imageWrapper">
+                  <img
+                    src="/Images/food2.jpeg"
+                    alt="burgerImage"
+                    width="200px"
+                    height="200px"
+                    style={{ objectFit: "cover", objectPosition: "center" }}
+                  />
                 </Box>
-                <Box sx={{display:"flex", alignItems:"center", justifyContent:"between", gap:"1rem"}}>
-                  <Typography className="pricing"><span>Rs. 928</span> Rs. 900</Typography>
-                  {/* <Box sx={{display:"flex",justifyContent:"center",gap:"8px",alignItems:"center"}}><Button sx={{transform:"scaleY(-1)"}}><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography><Button><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography></Box> */}
-                  <div
-          style={{
-            backgroundColor: "#f1f1f1",
-            borderRadius: "10px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Tooltip title="Up Vote">
-            <IconButton
-              // onClick={() => {
-              //   onUpVoteHandler(reference);
-              // }}
-              aria-label="add to favorites"
-            >
-              <FavoriteIcon />
-            </IconButton>
-          </Tooltip>
-          <span style={{ paddingRight: "10px" }}>0</span>
-          <span
-            style={{
-              height: "22px",
-              background: "rgb(207 202 202)",
-              width: "2px",
-              display: "inline-block",
-            }}
-          ></span>
-          <Tooltip title="Down Vote">
-            <IconButton
-            >
-              <HeartBrokenIcon />
-            </IconButton>
-          </Tooltip>
-          <span style={{ paddingRight: "10px" }}>0</span>
-        </div>
+                <Box className="menuContent">
+                  <Box>
+                    <Typography className="menuHeading">
+                      Half Chicken
+                    </Typography>
+                    <Typography className="menuDescription">
+                      Leg and breast marinated in fresh Lebanese spices and
+                      charcoal grilled. Served with fresh salad and sauces.
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "between",
+                      gap: "1rem",
+                    }}
+                  >
+                    <Typography className="pricing">
+                      <span>£. 18.00</span> £. 17.99
+                    </Typography>
+                    {/* <Box sx={{display:"flex",justifyContent:"center",gap:"8px",alignItems:"center"}}><Button sx={{transform:"scaleY(-1)"}}><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography><Button><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography></Box> */}
+                    <div
+                      style={{
+                        backgroundColor: "#f1f1f1",
+                        borderRadius: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Tooltip title="Up Vote">
+                        <IconButton
+                          // onClick={() => {
+                          //   onUpVoteHandler(reference);
+                          // }}
+                          aria-label="add to favorites"
+                        >
+                          <FavoriteIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <span style={{ paddingRight: "10px" }}>0</span>
+                      <span
+                        style={{
+                          height: "22px",
+                          background: "rgb(207 202 202)",
+                          width: "2px",
+                          display: "inline-block",
+                        }}
+                      ></span>
+                      <Tooltip title="Down Vote">
+                        <IconButton>
+                          <HeartBrokenIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <span style={{ paddingRight: "10px" }}>0</span>
+                    </div>
+                  </Box>
                 </Box>
-              </Box>
-            </MenuItem>
-            </Box>
-            <MenuItem>
-              <Box className="imageWrapper">
-                <img src='/Images/burger2.webp' width="100%" alt='burgerImage'/>
-              </Box>
-              <Box className="menuContent">
-                <Box>
-                <Typography className='menuHeading'>Wow Winter Deal 2</Typography>
-                <Typography className='menuDescription'>1 Premium burger with 1 soft drink</Typography>
+              </MenuItem>
+              <MenuItem>
+                <Box className="imageWrapper">
+                  <img
+                    src="/Images/food3.jpeg"
+                    alt="burgerImage"
+                    width="200px"
+                    height="200px"
+                    style={{ objectFit: "cover", objectPosition: "center" }}
+                  />
                 </Box>
-                <Box sx={{display:"flex", alignItems:"center", justifyContent:"between", gap:"1rem"}}>
-                  <Typography className="pricing"><span>Rs. 928</span> Rs. 900</Typography>
-                  {/* <Box sx={{display:"flex",justifyContent:"center",gap:"8px",alignItems:"center"}}><Button sx={{transform:"scaleY(-1)"}}><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography><Button><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography></Box> */}
-                  <div
-          style={{
-            backgroundColor: "#f1f1f1",
-            borderRadius: "10px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Tooltip title="Up Vote">
-            <IconButton
-              // onClick={() => {
-              //   onUpVoteHandler(reference);
-              // }}
-              aria-label="add to favorites"
-            >
-              <FavoriteIcon />
-            </IconButton>
-          </Tooltip>
-          <span style={{ paddingRight: "10px" }}>0</span>
-          <span
-            style={{
-              height: "22px",
-              background: "rgb(207 202 202)",
-              width: "2px",
-              display: "inline-block",
-            }}
-          ></span>
-          <Tooltip title="Down Vote">
-            <IconButton
-            >
-              <HeartBrokenIcon />
-            </IconButton>
-          </Tooltip>
-          <span style={{ paddingRight: "10px" }}>0</span>
-        </div>
-                </Box>
-              </Box>
-            </MenuItem>
-            <MenuItem>
-              <Box className="imageWrapper">
-                <img src='/Images/burger3.webp' width="100%" alt='burgerImage'/>
-              </Box>
-              <Box className="menuContent">
-                <Box>
-                <Typography className='menuHeading'>Wow Winter Deal 3</Typography>
-                <Typography className='menuDescription'>1 Gignatic burger with 1 soft drink</Typography>
-                </Box>
-                {/* <Box>
+                <Box className="menuContent">
+                  <Box>
+                    <Typography className="menuHeading">Lamb Shish</Typography>
+                    <Typography className="menuDescription">
+                      Ten pieces of succulent, melt-in-your-mouth marinated lamb
+                      cubes in fresh spices and charcoaled grilled to absolute
+                      perfection.
+                    </Typography>
+                  </Box>
+                  {/* <Box>
                   <Typography className="pricing"><span>Rs. 1128</span> Rs. 999</Typography>
                 </Box> */}
-                <Box sx={{display:"flex", alignItems:"center", justifyContent:"between", gap:"1rem"}}>
-                  <Typography className="pricing"><span>Rs. 928</span> Rs. 900</Typography>
-                  {/* <Box sx={{display:"flex",justifyContent:"center",gap:"8px",alignItems:"center"}}><Button sx={{transform:"scaleY(-1)"}}><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography><Button><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography></Box> */}
-                  <div
-          style={{
-            backgroundColor: "#f1f1f1",
-            borderRadius: "10px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Tooltip title="Up Vote">
-            <IconButton
-              // onClick={() => {
-              //   onUpVoteHandler(reference);
-              // }}
-              aria-label="add to favorites"
-            >
-              <FavoriteIcon />
-            </IconButton>
-          </Tooltip>
-          <span style={{ paddingRight: "10px" }}>0</span>
-          <span
-            style={{
-              height: "22px",
-              background: "rgb(207 202 202)",
-              width: "2px",
-              display: "inline-block",
-            }}
-          ></span>
-          <Tooltip title="Down Vote">
-            <IconButton
-            >
-              <HeartBrokenIcon />
-            </IconButton>
-          </Tooltip>
-          <span style={{ paddingRight: "10px" }}>0</span>
-        </div>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "between",
+                      gap: "1rem",
+                    }}
+                  >
+                    <Typography className="pricing">
+                      <span>£. 23.00</span> £. 20.99
+                    </Typography>
+                    {/* <Box sx={{display:"flex",justifyContent:"center",gap:"8px",alignItems:"center"}}><Button sx={{transform:"scaleY(-1)"}}><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography><Button><img src='/Images/arrowUp.png' width={30}/></Button><Typography fontWeight={600} fontSize={20}>0</Typography></Box> */}
+                    <div
+                      style={{
+                        backgroundColor: "#f1f1f1",
+                        borderRadius: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Tooltip title="Up Vote">
+                        <IconButton
+                          // onClick={() => {
+                          //   onUpVoteHandler(reference);
+                          // }}
+                          aria-label="add to favorites"
+                        >
+                          <FavoriteIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <span style={{ paddingRight: "10px" }}>0</span>
+                      <span
+                        style={{
+                          height: "22px",
+                          background: "rgb(207 202 202)",
+                          width: "2px",
+                          display: "inline-block",
+                        }}
+                      ></span>
+                      <Tooltip title="Down Vote">
+                        <IconButton>
+                          <HeartBrokenIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <span style={{ paddingRight: "10px" }}>0</span>
+                    </div>
+                  </Box>
                 </Box>
-              </Box>
-            </MenuItem>
+              </MenuItem>
             </>
           )}
         </div>
@@ -340,10 +415,12 @@ export default function ViewRestaurant({ placeId }) {
   return (
     <div>
       {/* Iterate over the specified anchor positions (only 'right' in this case) */}
-      {['right'].map((anchor) => (
-        <React.Fragment key={anchor} >
+      {["right"].map((anchor) => (
+        <React.Fragment key={anchor}>
           {/* Button to open the drawer */}
-          <Button onClick={toggleDrawer(anchor, true, placeId)}>View Restaurant</Button>
+          <Button onClick={toggleDrawer(anchor, true, placeId)}>
+            View Restaurant
+          </Button>
           {/* Drawer component */}
           <Drawer
             anchor={anchor}
