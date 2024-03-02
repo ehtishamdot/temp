@@ -9,11 +9,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
 import { useRestaurant } from "../context/RestuaurantContext";
+import { SnackbarProvider } from "notistack";
 // import axios from "axios";
 
-function Sidebar() {
+function Sidebar(props) {
   const { restaurants, fetchRestaurant, fetchPlacesData, placesData } = useRestaurant();
-
   useEffect(() => {
     // fetchRestaurant();
     // fetchPlacesData();
@@ -28,7 +28,7 @@ function Sidebar() {
     centerPadding: "50px",
   };
 
-  // console.log(restaurants)
+  // console.log( fetchPlacesData, placesData)
 
   // const fetchRestaurant = () => {
   //   fetch("http://localhost:4000/restaurant/all")
@@ -74,17 +74,18 @@ function Sidebar() {
   // };
 
   return (
-    <div className="sidebar">
+    <div className="sidebar" style={{marginBottom:"3rem"}}>
       {/* <TextField
         id="outlined-basic"
         label="Searach Restaurant"
         variant="outlined"
       /> */}
+      <SnackbarProvider />
       <div className="restaurant-container">
         <Slider {...settings}>
           {restaurants?.map((data, index) => (
             <div key={index}>
-              <RestaurantReviewCard {...(data.voting || {})} {...(data.data || {})} />
+              <RestaurantReviewCard {...(data.voting || {})} {...(data.data || {})}/>
             </div>
           ))}
         </Slider>

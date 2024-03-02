@@ -10,7 +10,7 @@ export function RestaurantContextProvider({ children }) {
     fetch(`http://localhost:4000/restaurant/all/${lat}/${lng}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
 
         let upvotes;
         let downvotes;
@@ -26,7 +26,7 @@ export function RestaurantContextProvider({ children }) {
           };
         });
 
-        console.log(restaurantsData);
+        // console.log("Resturant Data",restaurantsData);
         setRestaurants(restaurantsData);
       });
   };
@@ -39,7 +39,7 @@ export function RestaurantContextProvider({ children }) {
     const latitude = "37.7749";
     const longitude = "-122.4194";
 
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=restaurant&key=${apiKey}`;
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=1000&type=restaurant&key=${apiKey}`;
     // axios
     //   .get(apiUrl)
     //   .then(function (response) {

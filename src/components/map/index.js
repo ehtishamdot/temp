@@ -25,9 +25,10 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useRestaurant } from "../../context/RestuaurantContext";
 
 const libraries = ["places"];
+
 const mapContainerStyle = {
   width: "100%",
-  height: "68vh",
+  height: "55vh",
 };
 
 const mapStyles = [
@@ -202,13 +203,11 @@ const mapStyles = [
 ];
 
 const options = {
-  styles: mapStyles,
-  zoomControl: true,
-  disableDefaultUI: true,
+  zoomControl: false,
+  google:null
 };
 
-const Map = () => 
-{
+const Map = (props) => {
   const { fetchRestaurant } = useRestaurant();
 
   const { isLoaded, loadError } = useLoadScript({
@@ -231,11 +230,12 @@ const Map = () =>
       },
     ]);
   }, []);
+
   console.log(selected);
 
   React.useEffect(() => {
-    fetchRestaurant(currentPosition?.lat, currentPosition?.lng)
-  }, [currentPosition])
+    fetchRestaurant(currentPosition?.lat, currentPosition?.lng);
+  }, [currentPosition]);
 
   const successCallback = (position) => {
     const { latitude, longitude } = position.coords;
@@ -249,7 +249,6 @@ const Map = () =>
       lng: newCenter.lng(),
     });
   };
-
 
   const errorCallback = (error) => {
     console.error("Error getting user location:", error);
@@ -288,7 +287,7 @@ const Map = () =>
         mapContainerStyle={mapContainerStyle}
         zoom={currentPosition ? 18 : 6}
         center={currentPosition || { lat: 55.3781, lng: -3.436 }}
-        // options={options}
+        options={options}
         onClick={onMapClick}
         onLoad={onMapLoad}
         onDragEnd={onMapDragEnd}
@@ -301,9 +300,9 @@ const Map = () =>
               onClick={() => {
                 setSelected(marker);
               }}
-            // icon={{
-            //   url: "/supervotes.svg"
-            // }}
+              // icon={{
+              //   url: "/supervotes.svg"
+              // }}
             />
           );
         })}
@@ -323,9 +322,10 @@ const Map = () =>
           </InfoWindow>
         ) : null}
       </GoogleMap>
-
+      <div style={{display:"flex", justifyContent:"center", alignItems:"center",gap:"1rem", margin:"2rem 0 1rem"}}>
       <Search panTo={panTo} fetchRestaurant={fetchRestaurant} />
       <Locate panTo={panTo} />
+      </div>
     </div>
   );
 };
@@ -381,7 +381,7 @@ function Search({ panTo, fetchRestaurant }) {
       const results = await getGeocode({ address });
       const { lat, lng } = await getLatLng(results[0]);
       panTo({ lat, lng });
-      fetchRestaurant(lat, lng)
+      fetchRestaurant(lat, lng);
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -395,6 +395,12 @@ function Search({ panTo, fetchRestaurant }) {
           onChange={handleInput}
           disabled={!ready}
           placeholder="Search your restaurant"
+          style={{
+            minWidth: "500px",
+            border: "2px solid #222",
+            padding: "5px 8px",
+            borderRadius: ".2rem",
+          }}
         />
         <ComboboxPopover>
           <ComboboxList>
